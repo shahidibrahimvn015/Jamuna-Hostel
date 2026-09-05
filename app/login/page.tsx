@@ -36,7 +36,7 @@ export default function LoginPage() {
           <span className="text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
             IIT Madras
           </span>
-          <h1 className="font-heading text-3xl font-medium italic">
+          <h1 className="font-heading text-3xl font-semibold tracking-wide uppercase">
             {process.env.NEXT_PUBLIC_HOSTEL_NAME ?? "Jamuna Hostel"}
           </h1>
           <span className="h-px w-10 bg-primary" />
