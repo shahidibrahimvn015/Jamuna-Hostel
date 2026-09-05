@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -28,13 +29,22 @@ export default async function DashboardLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <header className="relative flex items-center justify-end border-b bg-card px-4 py-3">
-        <div className="absolute left-1/2 flex -translate-x-1/2 flex-col items-center">
-          <span className="text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
-            IIT Madras
-          </span>
-          <span className="font-heading text-lg leading-tight font-semibold tracking-wide uppercase">
-            {process.env.NEXT_PUBLIC_HOSTEL_NAME ?? "Jamuna Hostel"}
-          </span>
+        <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2.5">
+          <Image
+            src="/icon.png"
+            alt=""
+            width={36}
+            height={36}
+            className="rounded-md ring-1 ring-border/60"
+          />
+          <div className="flex flex-col items-start">
+            <span className="text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
+              IIT Madras
+            </span>
+            <span className="font-heading text-lg leading-tight font-semibold tracking-wide uppercase">
+              {process.env.NEXT_PUBLIC_HOSTEL_NAME ?? "Jamuna Hostel"}
+            </span>
+          </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden text-right text-xs text-muted-foreground sm:block">

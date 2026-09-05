@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Suspense } from "react";
 import { Button } from "@/components/ui/button";
@@ -33,7 +34,14 @@ export default function LoginPage() {
     <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-4">
       <div className="flex w-full max-w-sm flex-col items-center gap-6 border border-border/70 bg-card px-8 py-10 text-center">
         <div className="flex flex-col items-center gap-2">
-          <span className="text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
+          <Image
+            src="/icon.png"
+            alt=""
+            width={56}
+            height={56}
+            className="rounded-xl ring-1 ring-border/60"
+          />
+          <span className="mt-1 text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
             IIT Madras
           </span>
           <h1 className="font-heading text-3xl font-semibold tracking-wide uppercase">
