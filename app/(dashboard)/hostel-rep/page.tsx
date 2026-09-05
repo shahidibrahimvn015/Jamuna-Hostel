@@ -20,7 +20,7 @@ export default async function HostelRepPage() {
       <div>
         <h1 className="text-xl font-semibold">Hostel Representatives</h1>
         <p className="text-sm text-muted-foreground">
-          Hostel office (including the warden) and active council details.
+          Hostel council and office details.
         </p>
       </div>
 

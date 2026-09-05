@@ -61,7 +61,7 @@ export const DASHBOARD_SECTIONS: DashboardSection[] = [
   {
     href: "/hostel-rep",
     title: "Hostel Representatives",
-    description: "Hostel office (including the warden) and council details.",
+    description: "Hostel council and office details.",
     icon: Users,
     color: "hostelrep",
   },
