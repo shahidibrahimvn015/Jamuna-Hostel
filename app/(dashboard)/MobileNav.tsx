@@ -23,17 +23,17 @@ export function MobileNav({ isAdmin }: { isAdmin: boolean }) {
       <DialogPrimitive.Portal>
         <DialogPrimitive.Backdrop className="fixed inset-0 z-50 bg-black/30 duration-100 data-open:animate-in data-open:fade-in-0 data-closed:animate-out data-closed:fade-out-0" />
         <DialogPrimitive.Popup className="fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col gap-4 border-r bg-card p-4 shadow-lg outline-none duration-150 data-open:animate-in data-open:slide-in-from-left data-closed:animate-out data-closed:slide-out-to-left">
-          <div className="flex items-center justify-between">
+          <div className="relative flex items-center justify-between">
             <DialogPrimitive.Title className="font-heading text-sm font-semibold tracking-widest uppercase">
               Menu
             </DialogPrimitive.Title>
-            <div className="flex items-center gap-2">
+            <div className="absolute left-1/2 -translate-x-1/2">
               <ThemeToggle />
-              <DialogPrimitive.Close render={<Button variant="ghost" size="icon-sm" />}>
-                <X className="size-4" />
-                <span className="sr-only">Close menu</span>
-              </DialogPrimitive.Close>
             </div>
+            <DialogPrimitive.Close render={<Button variant="ghost" size="icon-sm" />}>
+              <X className="size-4" />
+              <span className="sr-only">Close menu</span>
+            </DialogPrimitive.Close>
           </div>
           <div onClick={() => setOpen(false)}>
             <SidebarNav isAdmin={isAdmin} />
