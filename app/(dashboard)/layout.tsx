@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import type { ReactNode } from "react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
 import { createClient } from "@/lib/supabase/server";
 import { MobileNav } from "./MobileNav";
@@ -29,31 +28,31 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="relative flex items-center justify-between border-b bg-card px-4 py-3">
-        <div className="flex items-center gap-2">
-          <MobileNav isAdmin={profile?.role === "admin"} />
+      <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b bg-card px-4 py-3">
+        <div className="flex items-center gap-2 justify-self-start">
+          <MobileNav isAdmin={profile?.role === "admin"} onSignOut={signOut} />
           <div className="hidden md:block">
             <ThemeToggle />
           </div>
         </div>
-        <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2.5">
+        <div className="flex min-w-0 items-center gap-2 justify-self-center sm:gap-2.5">
           <Image
             src="/icon.png"
             alt=""
             width={36}
             height={36}
-            className="rounded-md ring-1 ring-border/60"
+            className="size-8 shrink-0 rounded-md ring-1 ring-border/60 sm:size-9"
           />
-          <div className="flex flex-col items-start">
-            <span className="text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
+          <div className="flex min-w-0 flex-col items-center">
+            <span className="text-[0.6rem] font-medium tracking-widest text-muted-foreground uppercase sm:text-[0.65rem]">
               IIT Madras
             </span>
-            <span className="font-heading text-lg leading-tight font-semibold tracking-wide uppercase">
+            <span className="font-heading text-base leading-tight font-semibold tracking-wide uppercase sm:text-lg">
               {process.env.NEXT_PUBLIC_HOSTEL_NAME ?? "Jamuna Hostel"}
             </span>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 justify-self-end">
           <div className="hidden text-right text-xs text-muted-foreground sm:block">
             <div>{profile?.email}</div>
             {profile?.role && (
@@ -62,17 +61,12 @@ export default async function DashboardLayout({
               </Badge>
             )}
           </div>
-          <form action={signOut}>
-            <Button variant="outline" size="sm" type="submit">
-              Sign out
-            </Button>
-          </form>
         </div>
       </header>
 
       <div className="flex flex-1">
         <nav className="hidden w-60 shrink-0 border-r bg-card p-4 md:block">
-          <SidebarNav isAdmin={profile?.role === "admin"} />
+          <SidebarNav isAdmin={profile?.role === "admin"} onSignOut={signOut} />
         </nav>
 
         <main className="flex-1 p-4 md:p-6">{children}</main>

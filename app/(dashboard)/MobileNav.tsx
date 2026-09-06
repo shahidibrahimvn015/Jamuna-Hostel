@@ -7,7 +7,13 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { SidebarNav } from "./SidebarNav";
 
-export function MobileNav({ isAdmin }: { isAdmin: boolean }) {
+export function MobileNav({
+  isAdmin,
+  onSignOut,
+}: {
+  isAdmin: boolean;
+  onSignOut: () => void | Promise<void>;
+}) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -36,7 +42,7 @@ export function MobileNav({ isAdmin }: { isAdmin: boolean }) {
             </DialogPrimitive.Close>
           </div>
           <div onClick={() => setOpen(false)}>
-            <SidebarNav isAdmin={isAdmin} />
+            <SidebarNav isAdmin={isAdmin} onSignOut={onSignOut} />
           </div>
         </DialogPrimitive.Popup>
       </DialogPrimitive.Portal>
