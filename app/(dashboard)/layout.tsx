@@ -32,7 +32,9 @@ export default async function DashboardLayout({
       <header className="relative flex items-center justify-between border-b bg-card px-4 py-3">
         <div className="flex items-center gap-2">
           <MobileNav isAdmin={profile?.role === "admin"} />
-          <ThemeToggle />
+          <div className="hidden md:block">
+            <ThemeToggle />
+          </div>
         </div>
         <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2.5">
           <Image

@@ -3,6 +3,7 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { SidebarNav } from "./SidebarNav";
 
@@ -26,10 +27,13 @@ export function MobileNav({ isAdmin }: { isAdmin: boolean }) {
             <DialogPrimitive.Title className="font-heading text-sm font-semibold tracking-widest uppercase">
               Menu
             </DialogPrimitive.Title>
-            <DialogPrimitive.Close render={<Button variant="ghost" size="icon-sm" />}>
-              <X className="size-4" />
-              <span className="sr-only">Close menu</span>
-            </DialogPrimitive.Close>
+            <div className="flex items-center gap-2">
+              <ThemeToggle />
+              <DialogPrimitive.Close render={<Button variant="ghost" size="icon-sm" />}>
+                <X className="size-4" />
+                <span className="sr-only">Close menu</span>
+              </DialogPrimitive.Close>
+            </div>
           </div>
           <div onClick={() => setOpen(false)}>
             <SidebarNav isAdmin={isAdmin} />
