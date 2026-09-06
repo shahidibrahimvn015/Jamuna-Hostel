@@ -25,12 +25,9 @@ export function ThemeToggle() {
   const isDark = mounted && resolvedTheme === "dark";
 
   return (
-    <label className="flex w-full cursor-pointer items-center justify-between gap-2 text-sm text-muted-foreground">
-      <span className="flex items-center gap-2">
-        <Sun className="size-4 dark:hidden" />
-        <Moon className="hidden size-4 dark:block" />
-        Dark mode
-      </span>
+    <label className="flex w-fit cursor-pointer items-center gap-2 text-muted-foreground">
+      <Sun className="size-4 dark:hidden" />
+      <Moon className="hidden size-4 dark:block" />
       <Switch
         checked={isDark}
         onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}

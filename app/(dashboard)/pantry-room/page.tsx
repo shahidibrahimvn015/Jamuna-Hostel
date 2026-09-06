@@ -14,11 +14,7 @@ export default async function PantryRoomPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-xl font-semibold">Pantry Room</h1>
-        <p className="text-sm text-muted-foreground">
-          Occupy the pantry room for up to 60 minutes. It automatically
-          shows as free again once your time is up.
-        </p>
+        <h1 className="text-xl font-semibold">Hostel Facilities</h1>
       </div>
 
       <div className="flex flex-col gap-4">

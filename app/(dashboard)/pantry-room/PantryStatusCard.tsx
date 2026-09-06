@@ -82,6 +82,11 @@ export function PantryStatusCard({
           <p className="text-sm text-muted-foreground">{room.location}</p>
         )}
 
+        <p className="text-xs text-muted-foreground">
+          Note: occupy the pantry room for up to 60 minutes. It automatically
+          shows as free again once your time is up.
+        </p>
+
         {!isFree && (
           <p className="text-sm">
             Occupied by{" "}

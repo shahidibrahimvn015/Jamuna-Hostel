@@ -46,7 +46,7 @@ export const DASHBOARD_SECTIONS: DashboardSection[] = [
   },
   {
     href: "/pantry-room",
-    title: "Pantry Room",
+    title: "Hostel Facilities",
     description: "Check live occupancy and set your usage timer.",
     icon: UtensilsCrossed,
     color: "pantry",

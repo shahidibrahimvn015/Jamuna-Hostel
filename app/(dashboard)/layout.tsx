@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
 import { createClient } from "@/lib/supabase/server";
+import { MobileNav } from "./MobileNav";
 import { SidebarNav } from "./SidebarNav";
 
 export default async function DashboardLayout({
@@ -28,7 +29,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="relative flex items-center justify-end border-b bg-card px-4 py-3">
+      <header className="relative flex items-center justify-between border-b bg-card px-4 py-3">
+        <div className="flex items-center gap-2">
+          <MobileNav isAdmin={profile?.role === "admin"} />
+          <ThemeToggle />
+        </div>
         <div className="absolute left-1/2 flex -translate-x-1/2 items-center gap-2.5">
           <Image
             src="/icon.png"
@@ -64,13 +69,8 @@ export default async function DashboardLayout({
       </header>
 
       <div className="flex flex-1">
-        <nav className="hidden w-60 shrink-0 flex-col border-r bg-card p-4 md:flex">
-          <div className="flex-1">
-            <SidebarNav isAdmin={profile?.role === "admin"} />
-          </div>
-          <div className="border-t pt-3">
-            <ThemeToggle />
-          </div>
+        <nav className="hidden w-60 shrink-0 border-r bg-card p-4 md:block">
+          <SidebarNav isAdmin={profile?.role === "admin"} />
         </nav>
 
         <main className="flex-1 p-4 md:p-6">{children}</main>
