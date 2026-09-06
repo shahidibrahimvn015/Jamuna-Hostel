@@ -28,14 +28,17 @@ import {
 } from "@/lib/constants/network";
 import {
   buildComplaintEmailContent,
+  buildGmailAndroidIntentUrl,
   buildGmailAppComposeUrl,
   buildGmailWebComposeUrl,
 } from "@/lib/mailto";
 import { logTicket } from "./actions";
 
-function isMobileDevice() {
-  if (typeof navigator === "undefined") return false;
-  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+function getMobilePlatform(): "android" | "ios" | null {
+  if (typeof navigator === "undefined") return null;
+  if (/Android/i.test(navigator.userAgent)) return "android";
+  if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) return "ios";
+  return null;
 }
 
 export function ComplaintForm({ smailId }: { smailId: string }) {
@@ -72,22 +75,26 @@ export function ComplaintForm({ smailId }: { smailId: string }) {
       rollNumber: extractRollNumber(smailId) ?? smailId,
     });
 
-    const webUrl = buildGmailWebComposeUrl({
+    const composeParams = {
       to: WIFI_HELPDESK_EMAIL,
       cc: WIFI_COMPLAINT_CC,
       bcc: WIFI_COMPLAINT_BCC,
       subject,
       body,
-    });
+      // Forces Gmail to draft as the signed-in smail account, not whichever
+      // Google account happens to be active on the device/browser.
+      authuser: smailId,
+    };
+    const webUrl = buildGmailWebComposeUrl(composeParams);
+    const platform = getMobilePlatform();
 
-    if (isMobileDevice()) {
-      const appUrl = buildGmailAppComposeUrl({
-        to: WIFI_HELPDESK_EMAIL,
-        cc: WIFI_COMPLAINT_CC,
-        bcc: WIFI_COMPLAINT_BCC,
-        subject,
-        body,
-      });
+    if (platform === "android") {
+      // Chrome's intent:// mechanism launches the Gmail app package
+      // directly, with the web URL as a built-in fallback if it's not
+      // installed — no custom-scheme guessing needed.
+      window.location.href = buildGmailAndroidIntentUrl(composeParams);
+    } else if (platform === "ios") {
+      const appUrl = buildGmailAppComposeUrl(composeParams);
       const openedAt = Date.now();
       window.location.href = appUrl;
       setTimeout(() => {
