@@ -12,7 +12,7 @@ function LoginError() {
   if (error !== "domain") return null;
 
   return (
-    <p className="text-sm text-destructive text-center">
+    <p className="text-center text-sm text-destructive">
       Please sign in with your @smail.iitm.ac.in account.
     </p>
   );
@@ -31,35 +31,40 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center gap-6 p-4">
-      <div className="flex w-full max-w-sm flex-col items-center gap-6 border border-border/70 bg-card px-8 py-10 text-center">
-        <div className="flex flex-col items-center gap-2">
+    <div className="flex min-h-screen items-center justify-center bg-background p-4">
+      <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border/70 shadow-lg">
+        <div className="bg-hero-pattern flex flex-col items-center gap-1 px-8 pt-10 pb-16 text-center text-white">
           <Image
             src="/icon.png"
             alt=""
             width={56}
             height={56}
-            className="rounded-xl ring-1 ring-border/60"
+            className="rounded-xl ring-1 ring-white/40"
           />
-          <span className="mt-1 text-[0.65rem] font-medium tracking-widest text-muted-foreground uppercase">
+          <span className="mt-3 text-[0.65rem] font-medium tracking-widest text-white/75 uppercase">
             IIT Madras
           </span>
-          <h1 className="font-heading text-3xl font-semibold tracking-wide uppercase">
+          <p className="font-heading text-lg font-semibold tracking-wide uppercase">
             {process.env.NEXT_PUBLIC_HOSTEL_NAME ?? "Jamuna Hostel"}
-          </h1>
-          <span className="h-px w-10 bg-primary" />
-          <p className="pt-1 text-sm text-muted-foreground">
-            Sign in with your @smail.iitm.ac.in Google account
           </p>
+
+          <h1 className="font-heading mt-6 text-2xl font-semibold">Welcome</h1>
+          <p className="text-sm text-white/80">Sign in to continue</p>
         </div>
 
-        <Suspense fallback={null}>
-          <LoginError />
-        </Suspense>
+        <div className="relative -mt-6 flex flex-col items-center gap-4 rounded-t-3xl bg-card px-8 py-8">
+          <Suspense fallback={null}>
+            <LoginError />
+          </Suspense>
 
-        <Button onClick={signInWithGoogle} size="lg" className="w-full">
-          Sign in with Google
-        </Button>
+          <Button onClick={signInWithGoogle} size="lg" className="w-full">
+            Sign in with Google
+          </Button>
+
+          <p className="text-center text-xs text-muted-foreground">
+            Only @smail.iitm.ac.in accounts are allowed
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -65,7 +65,7 @@ export default async function DashboardLayout({
       </header>
 
       <div className="flex flex-1">
-        <nav className="hidden w-60 shrink-0 border-r bg-card p-4 md:block">
+        <nav className="bg-sidebar-pattern hidden w-64 shrink-0 p-5 md:block">
           <SidebarNav isAdmin={profile?.role === "admin"} onSignOut={signOut} />
         </nav>
 

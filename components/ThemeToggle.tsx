@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useSyncExternalStore } from "react";
+import { cn } from "cn";
 import { Switch } from "@/components/ui/switch";
 
 const emptySubscribe = () => () => {};
@@ -19,13 +20,18 @@ function useMounted() {
   );
 }
 
-export function ThemeToggle() {
+export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
   const mounted = useMounted();
   const isDark = mounted && resolvedTheme === "dark";
 
   return (
-    <label className="flex w-fit cursor-pointer items-center gap-2 text-muted-foreground">
+    <label
+      className={cn(
+        "flex w-fit cursor-pointer items-center gap-2",
+        className ?? "text-muted-foreground"
+      )}
+    >
       <Sun className="size-4 dark:hidden" />
       <Moon className="hidden size-4 dark:block" />
       <Switch

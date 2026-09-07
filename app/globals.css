@@ -96,6 +96,10 @@
   --hostelrep: oklch(0.55 0.17 330);
   --budget: oklch(0.6 0.14 150);
   --emergency: oklch(0.58 0.19 20);
+
+  /* Brand gradient (sidebar + home hero) — fixed brand colors, same in both themes */
+  --brand-from: #622f05;
+  --brand-to: #e39351;
 }
 
 .dark {
@@ -149,5 +153,34 @@
   }
   html {
     @apply font-sans;
+  }
+}
+
+@layer components {
+  /* Solid brand gradient, no decorative artwork. */
+  .bg-brand-gradient {
+    background-image: linear-gradient(150deg, var(--brand-from) 0%, var(--brand-to) 100%);
+  }
+
+  /* Sidebar / mobile nav drawer background: the supplied artwork (already
+     carries the brand gradient baked in), with a plain gradient underneath
+     as a fallback if the file is ever missing/renamed. */
+  .bg-sidebar-pattern {
+    background-image:
+      url("/backgrounds/sidebar-bg.jpeg"),
+      linear-gradient(160deg, var(--brand-from) 0%, var(--brand-to) 130%);
+    background-size: cover;
+    background-position: top left;
+    background-repeat: no-repeat;
+  }
+
+  /* Dashboard home hero background: same idea, landscape artwork. */
+  .bg-hero-pattern {
+    background-image:
+      url("/backgrounds/home-header.jpeg"),
+      linear-gradient(155deg, var(--brand-from) 0%, var(--brand-to) 120%);
+    background-size: cover;
+    background-position: top right;
+    background-repeat: no-repeat;
   }
 }

@@ -1,5 +1,4 @@
 import {
-  Bell,
   Siren,
   UtensilsCrossed,
   Users,
@@ -36,14 +35,11 @@ export const SECTION_COLOR_CLASSES: Record<
   },
 };
 
+// Notice Board intentionally has no entry here: it no longer appears in the
+// sidebar nav or the overview grid — it now lives as a "Latest notifications"
+// widget on the dashboard home page (see app/(dashboard)/dashboard/page.tsx),
+// with the full board still reachable from its "See all" link.
 export const DASHBOARD_SECTIONS: DashboardSection[] = [
-  {
-    href: "/notice-board",
-    title: "Notice Board",
-    description: "Upcoming events and announcements.",
-    icon: Bell,
-    color: "notice",
-  },
   {
     href: "/pantry-room",
     title: "Hostel Facilities",
