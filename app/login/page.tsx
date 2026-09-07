@@ -33,14 +33,10 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-border/70 shadow-lg">
-        <div className="bg-hero-pattern flex flex-col items-center gap-1 px-8 pt-10 pb-16 text-center text-white">
-          <Image
-            src="/icon.png"
-            alt=""
-            width={56}
-            height={56}
-            className="rounded-xl ring-1 ring-white/40"
-          />
+        <div className="bg-brand-gradient flex flex-col items-center gap-1 px-8 pt-10 pb-16 text-center text-white">
+          <span className="flex items-center justify-center rounded-xl bg-background p-2 ring-1 ring-border/60">
+            <Image src="/icon.png" alt="" width={40} height={40} className="rounded-md" />
+          </span>
           <span className="mt-3 text-[0.65rem] font-medium tracking-widest text-white/75 uppercase">
             IIT Madras
           </span>

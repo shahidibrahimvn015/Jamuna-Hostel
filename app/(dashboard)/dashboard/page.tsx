@@ -1,7 +1,6 @@
-import { ArrowRight, Bell, Siren, User, Wifi } from "lucide-react";
+import { ArrowRight, Bell, Siren, Wifi } from "lucide-react";
 import Link from "next/link";
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
-import { DASHBOARD_SECTIONS, SECTION_COLOR_CLASSES } from "@/lib/constants/sections";
 import { createClient } from "@/lib/supabase/server";
 import { PantryPreview } from "./PantryPreview";
 
@@ -29,28 +28,26 @@ export default async function DashboardOverviewPage() {
     <div className="flex flex-col gap-6">
       {/* Hero */}
       <section className="bg-hero-pattern -mx-4 -mt-4 rounded-b-3xl px-5 pt-6 pb-10 text-white sm:px-6 md:-mx-6 md:-mt-6 md:px-8">
-        <div className="flex items-center justify-between">
-          <p className="text-xs font-medium tracking-widest text-white/75 uppercase">
-            {today}
-          </p>
-          {/* Reserved for a user photo; falls back to the role since no
-              photo upload exists yet. */}
-          {profile?.role ? (
-            <span className="flex h-10 min-w-10 items-center justify-center rounded-full bg-white/20 px-3 text-xs font-medium tracking-wide text-white capitalize ring-1 ring-white/30">
-              {profile.role}
-            </span>
-          ) : (
-            <span className="flex size-10 items-center justify-center rounded-full bg-white/20 ring-1 ring-white/30">
-              <User className="size-5 text-white" />
-            </span>
-          )}
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-sm text-white/80">Hello,</p>
+            <h1 className="font-heading text-3xl font-semibold">{displayName}</h1>
+          </div>
+          <div className="flex flex-col items-end gap-2 text-right">
+            <p className="text-xs font-medium tracking-widest text-white/75 uppercase">
+              {today}
+            </p>
+            {profile?.role && (
+              <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium tracking-wide text-white capitalize ring-1 ring-white/30">
+                {profile.role}
+              </span>
+            )}
+          </div>
         </div>
-        <p className="mt-5 text-sm text-white/80">Hello,</p>
-        <h1 className="font-heading text-3xl font-semibold">{displayName}</h1>
       </section>
 
       {/* Quick actions — overlapping the hero, like the two shortcut tiles on the reference design */}
-      <div className="-mt-8 grid grid-cols-2 gap-3 px-1 sm:-mt-9 md:-mt-10">
+      <div className="-mt-4 grid grid-cols-2 gap-3 px-1 sm:-mt-5 md:-mt-6">
         <Link
           href="/wifi"
           className="bg-brand-gradient flex flex-col justify-between gap-6 rounded-2xl p-4 text-white shadow-md transition-transform hover:-translate-y-0.5"
@@ -122,39 +119,6 @@ export default async function DashboardOverviewPage() {
           </h2>
           <PantryPreview rooms={rooms ?? []} />
         </section>
-      </div>
-
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {DASHBOARD_SECTIONS.map((section, i) => {
-          const colors = SECTION_COLOR_CLASSES[section.color];
-          const Icon = section.icon;
-          return (
-            <Link key={section.href} href={section.href} className="group flex">
-              <div
-                className={`bg-card flex-1 gap-4 rounded-xl border border-t-4 px-5 py-6 transition-all ${colors.border} hover:-translate-y-0.5 hover:shadow-md`}
-              >
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`flex size-10 items-center justify-center rounded-full ${colors.chip}`}
-                  >
-                    <Icon className={`size-5 ${colors.text}`} />
-                  </span>
-                  <span className="text-xs font-medium tracking-widest text-muted-foreground/60">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="mt-3 flex flex-col gap-1.5">
-                  <p className="font-heading text-lg group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4">
-                    {section.title}
-                  </p>
-                  <p className="text-sm leading-relaxed text-muted-foreground">
-                    {section.description}
-                  </p>
-                </div>
-              </div>
-            </Link>
-          );
-        })}
       </div>
     </div>
   );
