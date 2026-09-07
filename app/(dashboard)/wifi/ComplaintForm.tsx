@@ -3,13 +3,6 @@
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Dialog,
   DialogContent,
   DialogDescription,
@@ -139,62 +132,82 @@ export function ComplaintForm({ smailId }: { smailId: string }) {
     });
   }
 
+  const inputClass =
+    "rounded-[10px] border-white/50 bg-white/10 text-white placeholder:text-white/50 focus-visible:border-white disabled:opacity-70";
+  const actionButtonClass =
+    "rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]";
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Raise a complaint</CardTitle>
-        <CardDescription>
+    <div className="bg-brand-gradient flex flex-col gap-4 rounded-2xl p-5 text-white shadow-md">
+      <div>
+        <h2 className="font-heading text-lg font-semibold">Raise a complaint</h2>
+        <p className="mt-1 text-sm text-white/80">
           Fill in the details and click &quot;Draft complaint email&quot; to
           open Gmail (the app on your phone, or gmail.com on desktop) with a
           pre-filled complaint addressed to {WIFI_HELPDESK_EMAIL}. Once
           you&apos;ve actually sent it, click &quot;I&apos;ve sent mail&quot;
           to log your ticket — only complaints confirmed as sent are counted
           as raised.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form
-          ref={formRef}
-          onSubmit={(e) => e.preventDefault()}
-          className="flex flex-col gap-3"
-        >
-          <div className="flex flex-col gap-1">
-            <Label>Smail ID</Label>
-            <Input value={smailId} disabled />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="room_number">Room number</Label>
-            <Input id="room_number" name="room_number" required />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="contact_number">Contact number (optional)</Label>
-            <Input id="contact_number" name="contact_number" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="mac_address">
-              Device MAC address (optional)
-            </Label>
-            <Input id="mac_address" name="mac_address" />
-          </div>
-          <div className="flex flex-col gap-1">
-            <Label htmlFor="issue_description">Describe the issue</Label>
-            <Textarea id="issue_description" name="issue_description" required />
-          </div>
-          <p className="text-sm text-muted-foreground">
-            Note: if possible, attach a screenshot of your ipconfig output to
-            the drafted email before sending it.
-          </p>
-          <div className="flex gap-2">
-            <Button type="button" variant="outline" onClick={handleDraft}>
-              Draft complaint email
-            </Button>
-            <Button type="button" disabled={isPending} onClick={handleSent}>
-              I&apos;ve sent mail
-            </Button>
-          </div>
-          {message && <p className="text-sm text-muted-foreground">{message}</p>}
-        </form>
-      </CardContent>
+        </p>
+      </div>
+
+      <form
+        ref={formRef}
+        onSubmit={(e) => e.preventDefault()}
+        className="flex flex-col gap-3"
+      >
+        <div className="flex flex-col gap-1">
+          <Label className="text-white/90">Smail ID</Label>
+          <Input value={smailId} disabled className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="room_number" className="text-white/90">
+            Room number
+          </Label>
+          <Input id="room_number" name="room_number" required className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="contact_number" className="text-white/90">
+            Contact number (optional)
+          </Label>
+          <Input id="contact_number" name="contact_number" className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="mac_address" className="text-white/90">
+            Device MAC address (optional)
+          </Label>
+          <Input id="mac_address" name="mac_address" className={inputClass} />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label htmlFor="issue_description" className="text-white/90">
+            Describe the issue
+          </Label>
+          <Textarea
+            id="issue_description"
+            name="issue_description"
+            required
+            className={inputClass}
+          />
+        </div>
+        <p className="text-sm text-white/70">
+          Note: if possible, attach a screenshot of your ipconfig output to
+          the drafted email before sending it.
+        </p>
+        <div className="flex gap-2">
+          <Button type="button" className={actionButtonClass} onClick={handleDraft}>
+            Draft complaint email
+          </Button>
+          <Button
+            type="button"
+            disabled={isPending}
+            className={actionButtonClass}
+            onClick={handleSent}
+          >
+            I&apos;ve sent mail
+          </Button>
+        </div>
+        {message && <p className="text-sm text-white/90">{message}</p>}
+      </form>
 
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>
@@ -222,6 +235,6 @@ export function ComplaintForm({ smailId }: { smailId: string }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }
