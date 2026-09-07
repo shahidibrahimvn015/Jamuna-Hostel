@@ -34,13 +34,15 @@ export default async function BudgetPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-xl font-semibold">Semester Budget</h1>
-        <p className="text-sm text-muted-foreground">
-          {residents} resident(s) × {currency(perHead)} per head.
-        </p>
       </div>
 
       <div className="bg-brand-gradient rounded-2xl p-5 text-white shadow-md">
-        <h2 className="mb-4 font-heading text-lg font-semibold">Overview</h2>
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <h2 className="font-heading text-lg font-semibold">Overview</h2>
+          <p className="text-right text-sm text-white/75">
+            {residents} resident(s) · {currency(perHead)} per head
+          </p>
+        </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
             <p className="text-sm text-white/75">Total budget</p>
