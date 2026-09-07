@@ -69,14 +69,24 @@ function RepFields({
   );
 }
 
-function EditRepDialog({ rep, showPhoto }: { rep: Rep; showPhoto?: boolean }) {
+function EditRepDialog({
+  rep,
+  showPhoto,
+  triggerClassName,
+}: {
+  rep: Rep;
+  showPhoto?: boolean;
+  triggerClassName?: string;
+}) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+      <DialogTrigger
+        render={<Button size="sm" variant="outline" className={triggerClassName} />}
+      >
         Edit
       </DialogTrigger>
       <DialogContent>
@@ -200,9 +210,9 @@ export function RepSectionCard({
             {reps.map((rep) => (
               <div
                 key={rep.id}
-                className="flex w-[calc(50%-0.5rem)] flex-col items-center gap-2 rounded-lg border bg-surface-2 p-4 text-center sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(25%-0.75rem)]"
+                className="bg-brand-gradient flex w-[calc(50%-0.5rem)] flex-col items-center gap-2 rounded-2xl p-4 text-center text-white shadow-md sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(25%-0.75rem)]"
               >
-                <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-muted">
+                <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-white/20 ring-1 ring-white/30">
                   {rep.photo_path ? (
                     <Image
                       src={repPhotoUrl(rep.photo_path)}
@@ -213,23 +223,25 @@ export function RepSectionCard({
                       unoptimized
                     />
                   ) : (
-                    <UserRound className="size-8 text-muted-foreground" />
+                    <UserRound className="size-8 text-white" />
                   )}
                 </div>
                 <div>
                   <p className="font-medium">{rep.name}</p>
                   {rep.role_title && (
-                    <p className="text-xs text-muted-foreground">
-                      {rep.role_title}
-                    </p>
+                    <p className="text-xs text-white/75">{rep.role_title}</p>
                   )}
-                  {rep.phone && <p className="text-xs">{rep.phone}</p>}
+                  {rep.phone && <p className="text-xs text-white/90">{rep.phone}</p>}
                   {rep.email && (
-                    <p className="text-xs break-all">{rep.email}</p>
+                    <p className="text-xs break-all text-white/90">{rep.email}</p>
                   )}
                 </div>
                 {isAdmin && (
-                  <EditRepDialog rep={rep} showPhoto={showPhoto} />
+                  <EditRepDialog
+                    rep={rep}
+                    showPhoto={showPhoto}
+                    triggerClassName="rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]"
+                  />
                 )}
               </div>
             ))}
