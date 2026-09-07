@@ -1,4 +1,4 @@
-import { ArrowRight, Bell, Siren, Wifi } from "lucide-react";
+import { ArrowRight, Bell, Plus, Siren, Wifi } from "lucide-react";
 import Link from "next/link";
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
 import { createClient } from "@/lib/supabase/server";
@@ -25,9 +25,10 @@ export default async function DashboardOverviewPage() {
   }).format(new Date());
 
   return (
-    <div className="flex flex-col gap-6">
-      {/* Hero */}
-      <section className="bg-hero-pattern -mx-4 -mt-4 rounded-b-3xl px-5 pt-6 pb-10 text-white sm:px-6 md:-mx-6 md:-mt-6 md:px-8">
+    <div className="flex flex-col">
+      {/* Hero — flush against the (also gradient) site header above, square
+          corners; the rounded "cut" lives on the sheet below instead. */}
+      <section className="bg-hero-pattern -mx-4 -mt-4 px-5 pt-6 pb-14 text-white sm:px-6 md:-mx-6 md:-mt-6 md:px-8">
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-sm text-white/80">Hello,</p>
@@ -46,79 +47,92 @@ export default async function DashboardOverviewPage() {
         </div>
       </section>
 
-      {/* Quick actions */}
-      <div className="grid grid-cols-2 gap-3 px-1">
-        <Link
-          href="/wifi"
-          className="bg-brand-gradient flex flex-col justify-between gap-6 rounded-2xl p-4 text-white shadow-md transition-transform hover:-translate-y-0.5"
-        >
-          <Wifi className="size-6" />
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-medium">Raise WiFi Complaint</span>
-            <ArrowRight className="size-4 shrink-0" />
-          </div>
-        </Link>
-        <Link
-          href="/emergency"
-          className="bg-brand-gradient flex flex-col justify-between gap-6 rounded-2xl p-4 text-white shadow-md transition-transform hover:-translate-y-0.5"
-        >
-          <Siren className="size-6" />
-          <div className="flex items-center justify-between gap-2">
-            <span className="text-sm font-medium">Emergency Contacts</span>
-            <ArrowRight className="size-4 shrink-0" />
-          </div>
-        </Link>
-      </div>
+      {/* Content sheet — overlaps up into the hero with rounded top corners. */}
+      <div className="bg-background -mx-4 -mt-8 flex flex-col gap-6 rounded-t-3xl px-5 pt-6 sm:px-6 md:-mx-6 md:px-8">
+        <div className="grid grid-cols-2 gap-3">
+          <Link
+            href="/wifi"
+            className="bg-brand-gradient flex flex-col justify-between gap-6 rounded-2xl p-4 text-white shadow-md transition-transform hover:-translate-y-0.5"
+          >
+            <Wifi className="size-6" />
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-medium">Raise WiFi Complaint</span>
+              <ArrowRight className="size-4 shrink-0" />
+            </div>
+          </Link>
+          <Link
+            href="/emergency"
+            className="bg-brand-gradient flex flex-col justify-between gap-6 rounded-2xl p-4 text-white shadow-md transition-transform hover:-translate-y-0.5"
+          >
+            <Siren className="size-6" />
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-sm font-medium">Emergency Contacts</span>
+              <ArrowRight className="size-4 shrink-0" />
+            </div>
+          </Link>
+        </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-        {/* Latest notifications — the Notice Board's former sidebar slot */}
-        <section className="flex flex-col gap-3">
-          <div className="flex items-center justify-between">
+        <div className="grid grid-cols-1 gap-6 pb-6 lg:grid-cols-2">
+          {/* Latest notifications — the Notice Board's former sidebar slot */}
+          <section className="flex flex-col gap-3">
+            <div className="flex items-center justify-between">
+              <h2 className="text-sm font-semibold tracking-widest uppercase">
+                Latest Notifications
+              </h2>
+              <div className="flex items-center gap-3">
+                {profile?.role === "admin" && (
+                  <Link
+                    href="/notice-board"
+                    className="flex items-center gap-1 text-xs font-medium text-primary hover:underline"
+                  >
+                    <Plus className="size-3.5" />
+                    Add notice
+                  </Link>
+                )}
+                <Link
+                  href="/notice-board"
+                  className="text-xs font-medium text-muted-foreground hover:text-foreground"
+                >
+                  See all
+                </Link>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              {(notices ?? []).length === 0 && (
+                <p className="text-sm text-muted-foreground">
+                  No notices posted yet.
+                </p>
+              )}
+              {(notices ?? []).map((notice) => (
+                <Link
+                  key={notice.id}
+                  href="/notice-board"
+                  className="bg-surface-2 flex items-center gap-3 rounded-xl border px-3 py-3 transition-colors hover:bg-accent"
+                >
+                  <span className="bg-notice/12 flex size-9 shrink-0 items-center justify-center rounded-full">
+                    <Bell className="text-notice size-4" />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-medium">{notice.title}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {new Date(notice.event_date).toLocaleDateString("en-IN", {
+                        dateStyle: "medium",
+                      })}
+                    </p>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          {/* Pantry status — the "today's classes" slot */}
+          <section className="flex flex-col gap-3">
             <h2 className="text-sm font-semibold tracking-widest uppercase">
-              Latest Notifications
+              Pantry Status
             </h2>
-            <Link
-              href="/notice-board"
-              className="text-xs font-medium text-muted-foreground hover:text-foreground"
-            >
-              See all
-            </Link>
-          </div>
-          <div className="flex flex-col gap-2">
-            {(notices ?? []).length === 0 && (
-              <p className="text-sm text-muted-foreground">
-                No notices posted yet.
-              </p>
-            )}
-            {(notices ?? []).map((notice) => (
-              <Link
-                key={notice.id}
-                href="/notice-board"
-                className="bg-surface-2 flex items-center gap-3 rounded-xl border px-3 py-3 transition-colors hover:bg-accent"
-              >
-                <span className="bg-notice/12 flex size-9 shrink-0 items-center justify-center rounded-full">
-                  <Bell className="text-notice size-4" />
-                </span>
-                <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium">{notice.title}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {new Date(notice.event_date).toLocaleDateString("en-IN", {
-                      dateStyle: "medium",
-                    })}
-                  </p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
-
-        {/* Pantry status — the "today's classes" slot */}
-        <section className="flex flex-col gap-3">
-          <h2 className="text-sm font-semibold tracking-widest uppercase">
-            Pantry Status
-          </h2>
-          <PantryPreview rooms={rooms ?? []} />
-        </section>
+            <PantryPreview rooms={rooms ?? []} />
+          </section>
+        </div>
       </div>
     </div>
   );

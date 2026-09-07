@@ -20,7 +20,11 @@ export function MobileNav({
     <DialogPrimitive.Root open={open} onOpenChange={setOpen}>
       <DialogPrimitive.Trigger
         render={
-          <Button variant="ghost" size="icon-sm" className="md:hidden" />
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-white hover:bg-white/15 hover:text-white md:hidden"
+          />
         }
       >
         <LayoutGrid className="size-5" />

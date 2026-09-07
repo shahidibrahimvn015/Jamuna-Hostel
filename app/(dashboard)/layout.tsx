@@ -28,11 +28,11 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="grid grid-cols-[1fr_auto_1fr] items-center gap-2 border-b bg-card px-4 py-3">
+      <header className="bg-hero-pattern grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 text-white">
         <div className="flex items-center gap-2 justify-self-start">
           <MobileNav isAdmin={profile?.role === "admin"} onSignOut={signOut} />
           <div className="hidden md:block">
-            <ThemeToggle />
+            <ThemeToggle className="text-white/90" />
           </div>
         </div>
         <div className="flex min-w-0 items-center gap-2 justify-self-center sm:gap-2.5">
@@ -41,22 +41,25 @@ export default async function DashboardLayout({
             alt=""
             width={36}
             height={36}
-            className="size-8 shrink-0 rounded-md ring-1 ring-border/60 sm:size-9"
+            className="size-8 shrink-0 rounded-md ring-1 ring-white/40 sm:size-9"
           />
           <div className="flex min-w-0 flex-col items-center">
-            <span className="text-[0.6rem] font-medium tracking-widest text-muted-foreground uppercase sm:text-[0.65rem]">
+            <span className="text-[0.6rem] font-medium tracking-widest text-white/75 uppercase sm:text-[0.65rem]">
               IIT Madras
             </span>
-            <span className="font-heading text-base leading-tight font-semibold tracking-wide uppercase sm:text-lg">
+            <span className="font-heading text-base leading-tight font-semibold tracking-wide text-white uppercase sm:text-lg">
               {process.env.NEXT_PUBLIC_HOSTEL_NAME ?? "Jamuna Hostel"}
             </span>
           </div>
         </div>
         <div className="flex items-center gap-3 justify-self-end">
-          <div className="hidden text-right text-xs text-muted-foreground sm:block">
+          <div className="hidden text-right text-xs text-white/80 sm:block">
             <div>{profile?.email}</div>
             {profile?.role && (
-              <Badge variant="outline" className="mt-0.5 capitalize">
+              <Badge
+                variant="outline"
+                className="mt-0.5 border-white/30 text-white capitalize"
+              >
                 {profile.role}
               </Badge>
             )}
