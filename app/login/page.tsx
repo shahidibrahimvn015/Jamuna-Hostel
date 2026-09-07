@@ -12,7 +12,7 @@ function LoginError() {
   if (error !== "domain") return null;
 
   return (
-    <p className="text-center text-sm text-red-100">
+    <p className="text-center text-sm text-destructive">
       Please sign in with your @smail.iitm.ac.in account.
     </p>
   );
@@ -31,8 +31,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="bg-brand-gradient flex min-h-screen flex-col items-center justify-center gap-10 p-6 text-center text-white">
-      <div className="flex flex-col items-center gap-1">
+    <div className="bg-brand-gradient flex min-h-screen flex-col">
+      <div className="flex flex-1 flex-col items-center justify-center gap-1 px-6 pt-16 pb-14 text-center text-white">
         <span className="flex items-center justify-center rounded-xl bg-background p-2 ring-1 ring-white/40">
           <Image src="/icon.png" alt="" width={40} height={40} className="rounded-md" />
         </span>
@@ -47,7 +47,10 @@ export default function LoginPage() {
         <p className="text-sm text-white/80">Sign in to continue</p>
       </div>
 
-      <div className="flex w-full max-w-xs flex-col items-center gap-4">
+      {/* Sheet — same fixed, generous corner radius as the dashboard's
+          content sheet; bg-card already flips to a near-black surface in
+          dark theme, so the button below adapts to match. */}
+      <div className="bg-card relative -mt-6 flex flex-col items-center gap-4 rounded-t-[2rem] px-8 py-10">
         <Suspense fallback={null}>
           <LoginError />
         </Suspense>
@@ -55,12 +58,12 @@ export default function LoginPage() {
         <Button
           onClick={signInWithGoogle}
           size="lg"
-          className="w-full bg-[#422400] text-white hover:bg-[#422400]/85"
+          className="w-full max-w-xs bg-[#422400] text-white hover:bg-[#422400]/85 dark:bg-white dark:text-[#422400] dark:hover:bg-white/85"
         >
           Sign in with Google
         </Button>
 
-        <p className="text-center text-xs text-white/70">
+        <p className="text-center text-xs text-muted-foreground">
           Only @smail.iitm.ac.in accounts are allowed
         </p>
       </div>

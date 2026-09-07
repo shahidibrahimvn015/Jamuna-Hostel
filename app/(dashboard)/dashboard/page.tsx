@@ -1,6 +1,7 @@
 import { ArrowRight, Bell, Plus, Siren, Wifi } from "lucide-react";
 import Link from "next/link";
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
+import { formatHeaderDate } from "@/lib/formatHeaderDate";
 import { createClient } from "@/lib/supabase/server";
 import { PantryPreview } from "./PantryPreview";
 
@@ -18,11 +19,7 @@ export default async function DashboardOverviewPage() {
   ]);
 
   const displayName = profile?.full_name || profile?.roll_number || "there";
-  const today = new Intl.DateTimeFormat("en-IN", {
-    weekday: "short",
-    day: "numeric",
-    month: "short",
-  }).format(new Date());
+  const { weekday, day, month } = formatHeaderDate(new Date());
 
   return (
     <div className="flex flex-col">
@@ -36,7 +33,7 @@ export default async function DashboardOverviewPage() {
           </div>
           <div className="flex flex-col items-end gap-2 text-right">
             <p className="text-xs font-medium tracking-widest text-white/75 uppercase">
-              {today}
+              <span className="font-bold">{weekday}</span> {day} {month}
             </p>
             {profile?.role && (
               <span className="inline-flex items-center rounded-full bg-white/20 px-3 py-1 text-xs font-medium tracking-wide text-white capitalize ring-1 ring-white/30">
@@ -47,8 +44,10 @@ export default async function DashboardOverviewPage() {
         </div>
       </section>
 
-      {/* Content sheet — overlaps up into the hero with rounded top corners. */}
-      <div className="bg-background -mx-4 -mt-8 flex flex-col gap-6 rounded-t-3xl px-5 pt-6 sm:px-6 md:-mx-6 md:px-8">
+      {/* Content sheet — overlaps up into the hero with rounded top corners.
+          Fixed radius (not the shrunk --radius token) so this curve stays
+          generous even though most boxes elsewhere are near-square now. */}
+      <div className="bg-background -mx-4 -mt-8 flex flex-col gap-6 rounded-t-[2rem] px-5 pt-10 sm:px-6 md:-mx-6 md:px-8">
         <div className="grid grid-cols-2 gap-3">
           <Link
             href="/wifi"
