@@ -54,6 +54,22 @@ export async function addTroubleshootingTip(blockId: number, tip: string) {
   return { error: null };
 }
 
+export async function editTroubleshootingTip(id: number, tip: string) {
+  const trimmed = tip.trim();
+  if (!trimmed) return { error: "Tip cannot be empty" };
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("wifi_troubleshooting_tips")
+    .update({ tip: trimmed })
+    .eq("id", id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/wifi");
+  return { error: null };
+}
+
 export async function deleteTroubleshootingTip(id: number) {
   const supabase = await createClient();
   const { error } = await supabase

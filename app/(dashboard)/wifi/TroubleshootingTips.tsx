@@ -15,6 +15,7 @@ import {
   addTroubleshootingTip,
   deleteTroubleshootingBlock,
   deleteTroubleshootingTip,
+  editTroubleshootingTip,
 } from "./actions";
 
 type Block = Database["public"]["Tables"]["wifi_troubleshooting_blocks"]["Row"];
@@ -31,9 +32,34 @@ function BlockCard({
 }) {
   const [isPending, startTransition] = useTransition();
   const [newTip, setNewTip] = useState("");
+  const [editingTipId, setEditingTipId] = useState<number | null>(null);
+  const [editValue, setEditValue] = useState("");
 
   const actionButtonClass =
     "rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]";
+  const inputClass =
+    "rounded-[10px] border-white/50 bg-white/10 text-white placeholder:text-white/50 focus-visible:border-white";
+
+  function startEditing(tip: Tip) {
+    setEditingTipId(tip.id);
+    setEditValue(tip.tip);
+  }
+
+  function cancelEditing() {
+    setEditingTipId(null);
+    setEditValue("");
+  }
+
+  function saveEditing(id: number) {
+    const value = editValue;
+    startTransition(async () => {
+      const result = await editTroubleshootingTip(id, value);
+      if (!result.error) {
+        setEditingTipId(null);
+        setEditValue("");
+      }
+    });
+  }
 
   return (
     <div className="bg-brand-gradient flex flex-col gap-2 rounded-2xl p-4 text-white shadow-md">
@@ -59,25 +85,63 @@ function BlockCard({
         <p className="text-sm text-white/70">No tips added yet.</p>
       )}
       <ul className="flex flex-col gap-2">
-        {tips.map((tip) => (
-          <li key={tip.id} className="flex items-start justify-between gap-2 text-sm text-white/90">
-            <span>• {tip.tip}</span>
-            {isAdmin && (
+        {tips.map((tip) =>
+          editingTipId === tip.id ? (
+            <li key={tip.id} className="flex items-center gap-2 text-sm">
+              <Input
+                value={editValue}
+                onChange={(e) => setEditValue(e.target.value)}
+                className={inputClass}
+                autoFocus
+              />
               <Button
                 size="sm"
-                disabled={isPending}
+                disabled={isPending || !editValue.trim()}
                 className={actionButtonClass}
-                onClick={() => {
-                  startTransition(async () => {
-                    await deleteTroubleshootingTip(tip.id);
-                  });
-                }}
+                onClick={() => saveEditing(tip.id)}
               >
-                Remove
+                Save
               </Button>
-            )}
-          </li>
-        ))}
+              <Button
+                size="sm"
+                variant="ghost"
+                disabled={isPending}
+                className="text-white hover:bg-white/10 hover:text-white"
+                onClick={cancelEditing}
+              >
+                Cancel
+              </Button>
+            </li>
+          ) : (
+            <li key={tip.id} className="flex items-start justify-between gap-2 text-sm text-white/90">
+              <span>• {tip.tip}</span>
+              {isAdmin && (
+                <div className="flex shrink-0 gap-2">
+                  <Button
+                    size="sm"
+                    disabled={isPending}
+                    className={actionButtonClass}
+                    onClick={() => startEditing(tip)}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    size="sm"
+                    disabled={isPending}
+                    className={actionButtonClass}
+                    onClick={() => {
+                      startTransition(async () => {
+                        await deleteTroubleshootingTip(tip.id);
+                      });
+                    }}
+                  >
+                    Remove
+                  </Button>
+                </div>
+              )}
+            </li>
+          )
+        )}
       </ul>
 
       {isAdmin && (
@@ -86,7 +150,7 @@ function BlockCard({
             value={newTip}
             onChange={(e) => setNewTip(e.target.value)}
             placeholder="Add a tip to this block"
-            className="rounded-[10px] border-white/50 bg-white/10 text-white placeholder:text-white/50 focus-visible:border-white"
+            className={inputClass}
           />
           <Button
             disabled={isPending || !newTip.trim()}
