@@ -96,12 +96,15 @@ export function NoticeBoardClient({
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {notices.map((notice) => (
-          <Card key={notice.id} className="flex flex-col">
+          <div
+            key={notice.id}
+            className="bg-brand-gradient flex flex-col overflow-hidden rounded-2xl text-white shadow-md"
+          >
             {notice.posterUrl && (
               <button
                 type="button"
                 onClick={() => setLightbox(notice)}
-                className="relative block h-48 w-full shrink-0 overflow-hidden rounded-t-xl bg-muted"
+                className="relative block h-48 w-full shrink-0 bg-black/10"
               >
                 <Image
                   src={notice.posterUrl}
@@ -112,23 +115,22 @@ export function NoticeBoardClient({
                 />
               </button>
             )}
-            <CardHeader>
-              <CardTitle>{notice.title}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {new Date(notice.event_date).toLocaleDateString("en-IN", {
-                  dateStyle: "medium",
-                })}
-              </p>
-            </CardHeader>
-            <CardContent className="flex flex-1 flex-col justify-between gap-3">
-              <p className="text-sm whitespace-pre-wrap">
-                {notice.description}
-              </p>
+            <div className="flex flex-1 flex-col justify-between gap-3 p-5">
+              <div className="flex flex-col gap-2">
+                <h3 className="font-heading text-lg font-semibold">{notice.title}</h3>
+                <p className="text-xs font-medium tracking-widest text-white/75 uppercase">
+                  {new Date(notice.event_date).toLocaleDateString("en-IN", {
+                    dateStyle: "medium",
+                  })}
+                </p>
+                <p className="text-sm whitespace-pre-wrap text-white/90">
+                  {notice.description}
+                </p>
+              </div>
               {isAdmin && (
                 <Button
                   size="sm"
-                  variant="outline"
-                  className="w-fit"
+                  className="w-fit rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0]"
                   disabled={isPending}
                   onClick={() => {
                     startTransition(async () => {
@@ -139,8 +141,8 @@ export function NoticeBoardClient({
                   Remove
                 </Button>
               )}
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
 
