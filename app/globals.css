@@ -174,7 +174,12 @@
     background-repeat: no-repeat;
   }
 
-  /* Dashboard home hero background: same idea, landscape artwork. */
+  /* Site header + dashboard hero background: same idea, landscape artwork.
+     `background-attachment: fixed` anchors the image to the viewport rather
+     than each element's own box, so the header (in the layout) and the
+     hero (in the page, stacked directly under it) show continuous slices
+     of the same image instead of each restarting their own "cover" crop —
+     no seam where the two elements meet. */
   .bg-hero-pattern {
     background-image:
       url("/backgrounds/home-header.jpeg"),
@@ -182,5 +187,6 @@
     background-size: cover;
     background-position: top right;
     background-repeat: no-repeat;
+    background-attachment: fixed;
   }
 }

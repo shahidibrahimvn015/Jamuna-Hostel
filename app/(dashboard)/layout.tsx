@@ -36,13 +36,9 @@ export default async function DashboardLayout({
           </div>
         </div>
         <div className="flex min-w-0 items-center gap-2 justify-self-center sm:gap-2.5">
-          <Image
-            src="/icon.png"
-            alt=""
-            width={36}
-            height={36}
-            className="size-8 shrink-0 rounded-md ring-1 ring-white/40 sm:size-9"
-          />
+          <span className="bg-background flex shrink-0 items-center justify-center rounded-md p-1 ring-1 ring-white/40 sm:p-1.5">
+            <Image src="/icon.png" alt="" width={28} height={28} className="size-6 rounded-sm sm:size-7" />
+          </span>
           <div className="flex min-w-0 flex-col items-center">
             <span className="text-[0.6rem] font-medium tracking-widest text-white/75 uppercase sm:text-[0.65rem]">
               IIT Madras
