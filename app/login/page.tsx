@@ -32,7 +32,7 @@ export default function LoginPage() {
 
   return (
     <div className="bg-brand-gradient flex min-h-screen flex-col">
-      <div className="flex flex-col items-center gap-1 px-6 pt-16 pb-10 text-center text-white">
+      <div className="flex flex-1 flex-col items-center justify-center gap-1 px-6 pt-16 pb-10 text-center text-white">
         <span className="flex items-center justify-center rounded-xl bg-background p-2 ring-1 ring-white/40">
           <Image src="/icon.png" alt="" width={40} height={40} className="rounded-md" />
         </span>
@@ -47,12 +47,13 @@ export default function LoginPage() {
         <p className="text-sm text-white/80">Sign in to continue</p>
       </div>
 
-      {/* Sheet — fills the rest of the screen (instead of the greeting
-          being centered in it) so the button sits right below "Sign in to
-          continue" rather than floating in a big empty gap. Same fixed,
-          generous corner radius as the dashboard's content sheet; bg-card
-          already flips to a near-black surface in dark theme, so the
-          button below adapts to match. */}
+      {/* Sheet — flex-1 like the greeting above it, so the two halves split
+          the screen evenly (greeting centered in its half, matching the
+          reference) while the button still hugs the top of this half
+          (no justify-center here) instead of floating in a big gap. Same
+          fixed, generous corner radius as the dashboard's content sheet;
+          bg-card already flips to a near-black surface in dark theme, so
+          the button below adapts to match. */}
       <div className="bg-card relative -mt-6 flex flex-1 flex-col items-center gap-4 rounded-t-[2rem] px-8 py-10">
         <Suspense fallback={null}>
           <LoginError />

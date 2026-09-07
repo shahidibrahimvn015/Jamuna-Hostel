@@ -121,12 +121,12 @@ export function PantryStatusCard({
               max={MAX_DURATION_MINUTES}
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
-              className="w-24"
+              className="w-24 rounded-[10px] border-white/50 bg-white/10 text-white placeholder:text-white/50 focus-visible:border-white"
             />
           </div>
           <Button
             disabled={isPending}
-            className="bg-white text-[#422400] hover:bg-white/85"
+            className="rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0]"
             onClick={() => {
               setError(null);
               startTransition(async () => {
@@ -151,7 +151,7 @@ export function PantryStatusCard({
         <Button
           variant="outline"
           disabled={isPending}
-          className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
+          className="rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]"
           onClick={() => {
             startTransition(async () => {
               const result = await releasePantryRoom(room.id);
