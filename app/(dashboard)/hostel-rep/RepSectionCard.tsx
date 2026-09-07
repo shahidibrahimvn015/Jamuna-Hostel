@@ -4,7 +4,6 @@ import { UserRound } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -15,7 +14,6 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
 import type { Database, HostelRepSection } from "@/lib/types/database.types";
 import { addHostelRep, deleteHostelRep, updateHostelRep } from "./actions";
 
@@ -133,9 +131,11 @@ function EditRepDialog({
 function AddRepDialog({
   section,
   showPhoto,
+  triggerClassName,
 }: {
   section: HostelRepSection;
   showPhoto?: boolean;
+  triggerClassName?: string;
 }) {
   const [open, setOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -144,7 +144,9 @@ function AddRepDialog({
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+      <DialogTrigger
+        render={<Button size="sm" variant="outline" className={triggerClassName} />}
+      >
         Add
       </DialogTrigger>
       <DialogContent>
@@ -179,6 +181,9 @@ function AddRepDialog({
   );
 }
 
+const actionButtonClass =
+  "rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]";
+
 export function RepSectionCard({
   section,
   title,
@@ -194,81 +199,102 @@ export function RepSectionCard({
 }) {
   const showPhoto = layout === "grid";
 
-  return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{title}</CardTitle>
-        {isAdmin && <AddRepDialog section={section} showPhoto={showPhoto} />}
-      </CardHeader>
-      <CardContent>
+  // Council: one themed box holding every member, arranged inside it (no
+  // per-member box). Office: each member gets its own themed box, stacked
+  // downward.
+  if (layout === "grid") {
+    return (
+      <div className="bg-brand-gradient rounded-2xl p-5 text-white shadow-md">
+        <div className="mb-4 flex items-center justify-between gap-2">
+          <h2 className="text-lg font-semibold">{title}</h2>
+          {isAdmin && (
+            <AddRepDialog
+              section={section}
+              showPhoto={showPhoto}
+              triggerClassName={actionButtonClass}
+            />
+          )}
+        </div>
+
         {reps.length === 0 && (
-          <p className="text-sm text-muted-foreground">No entries yet.</p>
+          <p className="text-sm text-white/70">No entries yet.</p>
         )}
 
-        {layout === "grid" ? (
-          <div className="flex flex-wrap justify-center gap-4">
-            {reps.map((rep) => (
-              <div
-                key={rep.id}
-                className="bg-brand-gradient flex w-[calc(50%-0.5rem)] flex-col items-center gap-2 rounded-2xl p-4 text-center text-white shadow-md sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(25%-0.75rem)]"
-              >
-                <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-white/20 ring-1 ring-white/30">
-                  {rep.photo_path ? (
-                    <Image
-                      src={repPhotoUrl(rep.photo_path)}
-                      alt={rep.name}
-                      width={80}
-                      height={80}
-                      className="size-20 object-cover"
-                      unoptimized
-                    />
-                  ) : (
-                    <UserRound className="size-8 text-white" />
-                  )}
-                </div>
-                <div>
-                  <p className="font-medium">{rep.name}</p>
-                  {rep.role_title && (
-                    <p className="text-xs text-white/75">{rep.role_title}</p>
-                  )}
-                  {rep.phone && <p className="text-xs text-white/90">{rep.phone}</p>}
-                  {rep.email && (
-                    <p className="text-xs break-all text-white/90">{rep.email}</p>
-                  )}
-                </div>
-                {isAdmin && (
-                  <EditRepDialog
-                    rep={rep}
-                    showPhoto={showPhoto}
-                    triggerClassName="rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]"
+        <div className="flex flex-wrap justify-center gap-4">
+          {reps.map((rep) => (
+            <div
+              key={rep.id}
+              className="flex w-[calc(50%-0.5rem)] flex-col items-center gap-2 text-center sm:w-[calc(33.333%-0.667rem)] lg:w-[calc(25%-0.75rem)]"
+            >
+              <div className="flex size-20 items-center justify-center overflow-hidden rounded-full bg-white/20 ring-1 ring-white/30">
+                {rep.photo_path ? (
+                  <Image
+                    src={repPhotoUrl(rep.photo_path)}
+                    alt={rep.name}
+                    width={80}
+                    height={80}
+                    className="size-20 object-cover"
+                    unoptimized
                   />
+                ) : (
+                  <UserRound className="size-8 text-white" />
                 )}
               </div>
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {reps.map((rep, i) => (
-              <div key={rep.id} className="flex flex-col gap-1">
-                {i > 0 && <Separator className="mb-2" />}
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="font-medium">{rep.name}</p>
-                    {rep.role_title && (
-                      <p className="text-sm text-muted-foreground">
-                        {rep.role_title}
-                      </p>
-                    )}
-                    {rep.phone && <p className="text-sm">{rep.phone}</p>}
-                    {rep.email && <p className="text-sm">{rep.email}</p>}
-                  </div>
-                  {isAdmin && <EditRepDialog rep={rep} />}
-                </div>
+              <div>
+                <p className="font-medium">{rep.name}</p>
+                {rep.role_title && (
+                  <p className="text-xs text-white/75">{rep.role_title}</p>
+                )}
+                {rep.phone && <p className="text-xs text-white/90">{rep.phone}</p>}
+                {rep.email && (
+                  <p className="text-xs break-all text-white/90">{rep.email}</p>
+                )}
               </div>
-            ))}
+              {isAdmin && (
+                <EditRepDialog
+                  rep={rep}
+                  showPhoto={showPhoto}
+                  triggerClassName={actionButtonClass}
+                />
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-sm font-semibold tracking-widest text-muted-foreground uppercase">
+          {title}
+        </h2>
+        {isAdmin && <AddRepDialog section={section} showPhoto={showPhoto} />}
+      </div>
+
+      {reps.length === 0 && (
+        <p className="text-sm text-muted-foreground">No entries yet.</p>
+      )}
+
+      {reps.map((rep) => (
+        <div
+          key={rep.id}
+          className="bg-brand-gradient flex items-center justify-between gap-3 rounded-2xl p-4 text-white shadow-md"
+        >
+          <div>
+            <p className="font-medium">{rep.name}</p>
+            {rep.role_title && (
+              <p className="text-xs text-white/75">{rep.role_title}</p>
+            )}
+            {rep.phone && <p className="text-sm text-white/90">{rep.phone}</p>}
+            {rep.email && <p className="text-sm text-white/90">{rep.email}</p>}
           </div>
-        )}
-      </CardContent>
-    </Card>
+          {isAdmin && (
+            <EditRepDialog rep={rep} triggerClassName={actionButtonClass} />
+          )}
+        </div>
+      ))}
+    </div>
   );
 }
