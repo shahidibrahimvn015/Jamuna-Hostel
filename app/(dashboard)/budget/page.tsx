@@ -38,26 +38,30 @@ export default async function BudgetPage() {
 
       <div className="bg-brand-gradient rounded-2xl p-5 text-white shadow-md">
         <h2 className="mb-4 font-heading text-lg font-semibold">Overview</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-5">
-          <div>
-            <p className="text-sm text-white/75">Total budget</p>
-            <p className="text-lg font-semibold">{currency(totalBudget)}</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex flex-col gap-4">
+            <div>
+              <p className="text-sm text-white/75">Total budget</p>
+              <p className="text-lg font-semibold">{currency(totalBudget)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-white/75">Total spent</p>
+              <p className="text-lg font-semibold">{currency(totalSpent)}</p>
+            </div>
+            <div>
+              <p className="text-sm text-white/75">Balance</p>
+              <p className="text-lg font-semibold">{currency(balance)}</p>
+            </div>
           </div>
-          <div>
-            <p className="text-sm text-white/75">Total spent</p>
-            <p className="text-lg font-semibold">{currency(totalSpent)}</p>
-          </div>
-          <div>
-            <p className="text-sm text-white/75">Balance</p>
-            <p className="text-lg font-semibold">{currency(balance)}</p>
-          </div>
-          <div>
-            <p className="text-sm text-white/75">Residents</p>
-            <p className="text-lg font-semibold">{residents}</p>
-          </div>
-          <div>
-            <p className="text-sm text-white/75">Amount per head</p>
-            <p className="text-lg font-semibold">{currency(perHead)}</p>
+          <div className="flex flex-col gap-4">
+            <div>
+              <p className="text-sm text-white/75">Residents</p>
+              <p className="text-lg font-semibold">{residents}</p>
+            </div>
+            <div>
+              <p className="text-sm text-white/75">Amount per head</p>
+              <p className="text-lg font-semibold">{currency(perHead)}</p>
+            </div>
           </div>
         </div>
       </div>
