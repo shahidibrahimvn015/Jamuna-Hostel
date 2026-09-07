@@ -46,8 +46,8 @@ export default async function DashboardOverviewPage() {
         </div>
       </section>
 
-      {/* Quick actions — overlapping the hero, like the two shortcut tiles on the reference design */}
-      <div className="-mt-4 grid grid-cols-2 gap-3 px-1 sm:-mt-5 md:-mt-6">
+      {/* Quick actions */}
+      <div className="grid grid-cols-2 gap-3 px-1">
         <Link
           href="/wifi"
           className="bg-brand-gradient flex flex-col justify-between gap-6 rounded-2xl p-4 text-white shadow-md transition-transform hover:-translate-y-0.5"
