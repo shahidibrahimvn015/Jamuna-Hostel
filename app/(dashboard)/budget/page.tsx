@@ -1,9 +1,3 @@
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
 import { createClient } from "@/lib/supabase/server";
 import { AddPortfolioForm } from "./AddPortfolioForm";
@@ -45,25 +39,23 @@ export default async function BudgetPage() {
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="bg-brand-gradient rounded-2xl p-5 text-white shadow-md">
+        <h2 className="mb-4 font-heading text-lg font-semibold">Overview</h2>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           <div>
-            <p className="text-sm text-muted-foreground">Total budget</p>
+            <p className="text-sm text-white/75">Total budget</p>
             <p className="text-lg font-semibold">{currency(totalBudget)}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Total spent</p>
+            <p className="text-sm text-white/75">Total spent</p>
             <p className="text-lg font-semibold">{currency(totalSpent)}</p>
           </div>
           <div>
-            <p className="text-sm text-muted-foreground">Balance</p>
+            <p className="text-sm text-white/75">Balance</p>
             <p className="text-lg font-semibold">{currency(balance)}</p>
           </div>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
       <div className="flex flex-col gap-4">
         {(portfolios ?? []).map((portfolio) => (

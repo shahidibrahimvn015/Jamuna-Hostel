@@ -2,7 +2,6 @@
 
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Dialog,
   DialogContent,
@@ -37,6 +36,11 @@ function currency(n: number) {
   return `Rs. ${n.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
 
+const actionButtonClass =
+  "rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]";
+const inputClass =
+  "rounded-[10px] border-white/50 bg-white/10 text-white placeholder:text-white/50 focus-visible:border-white";
+
 function ViewBillButton({ path }: { path: string }) {
   const [isPending, startTransition] = useTransition();
 
@@ -44,6 +48,7 @@ function ViewBillButton({ path }: { path: string }) {
     <Button
       size="sm"
       variant="link"
+      className="text-white underline-offset-4 hover:text-white/80"
       disabled={isPending}
       onClick={() => {
         startTransition(async () => {
@@ -103,7 +108,9 @@ function EditItemDialog({ item }: { item: BudgetItem }) {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger render={<Button size="sm" variant="outline" />}>
+      <DialogTrigger
+        render={<Button size="sm" variant="outline" className={actionButtonClass} />}
+      >
         Edit
       </DialogTrigger>
       <DialogContent>
@@ -164,14 +171,14 @@ function AddItemForm({ portfolioId }: { portfolioId: number }) {
       }}
       className="flex flex-wrap items-end gap-2 pt-2"
     >
-      <Input name="item" placeholder="Item" required className="w-40" />
+      <Input name="item" placeholder="Item" required className={`w-40 ${inputClass}`} />
       <Input
         name="budget"
         type="number"
         step="0.01"
         min={0}
         placeholder="Budget"
-        className="w-28"
+        className={`w-28 ${inputClass}`}
       />
       <Input
         name="spent"
@@ -179,13 +186,18 @@ function AddItemForm({ portfolioId }: { portfolioId: number }) {
         step="0.01"
         min={0}
         placeholder="Spent"
-        className="w-28"
+        className={`w-28 ${inputClass}`}
       />
-      <Input name="bill" type="file" accept="application/pdf" className="w-52" />
-      <Button type="submit" disabled={isPending}>
+      <Input
+        name="bill"
+        type="file"
+        accept="application/pdf"
+        className={`w-52 ${inputClass}`}
+      />
+      <Button type="submit" disabled={isPending} className={actionButtonClass}>
         Add item
       </Button>
-      {error && <p className="text-sm text-destructive w-full">{error}</p>}
+      {error && <p className="w-full text-sm text-white/90">{error}</p>}
     </form>
   );
 }
@@ -210,64 +222,63 @@ export function PortfolioSection({
   );
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{portfolio.name}</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-3">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Item</TableHead>
-              <TableHead>Budget</TableHead>
-              <TableHead>Spent</TableHead>
-              <TableHead>Balance</TableHead>
-              <TableHead>Bill</TableHead>
-              {isAdmin && <TableHead className="text-right">Actions</TableHead>}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell>{item.item}</TableCell>
-                <TableCell>{currency(item.budget)}</TableCell>
-                <TableCell>{currency(item.spent)}</TableCell>
-                <TableCell>{currency(item.balance)}</TableCell>
-                <TableCell>
-                  {item.bill_path ? (
-                    <ViewBillButton path={item.bill_path} />
-                  ) : (
-                    <span className="text-sm text-muted-foreground">—</span>
-                  )}
-                </TableCell>
-                {isAdmin && (
-                  <TableCell className="text-right">
-                    <EditItemDialog item={item} />
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              <TableCell className="font-medium">Total</TableCell>
-              <TableCell className="font-medium">
-                {currency(totals.budget)}
-              </TableCell>
-              <TableCell className="font-medium">
-                {currency(totals.spent)}
-              </TableCell>
-              <TableCell className="font-medium">
-                {currency(totals.balance)}
-              </TableCell>
-              <TableCell />
-              {isAdmin && <TableCell />}
-            </TableRow>
-          </TableFooter>
-        </Table>
+    <div className="bg-brand-gradient flex flex-col gap-3 rounded-2xl p-5 text-white shadow-md">
+      <h2 className="font-heading text-lg font-semibold">{portfolio.name}</h2>
 
-        {isAdmin && <AddItemForm portfolioId={portfolio.id} />}
-      </CardContent>
-    </Card>
+      <Table>
+        <TableHeader>
+          <TableRow className="border-white/30 hover:bg-transparent">
+            <TableHead className="text-white/75">Item</TableHead>
+            <TableHead className="text-white/75">Budget</TableHead>
+            <TableHead className="text-white/75">Spent</TableHead>
+            <TableHead className="text-white/75">Balance</TableHead>
+            <TableHead className="text-white/75">Bill</TableHead>
+            {isAdmin && (
+              <TableHead className="text-right text-white/75">Actions</TableHead>
+            )}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {items.map((item) => (
+            <TableRow key={item.id} className="border-white/20 hover:bg-white/5">
+              <TableCell>{item.item}</TableCell>
+              <TableCell>{currency(item.budget)}</TableCell>
+              <TableCell>{currency(item.spent)}</TableCell>
+              <TableCell>{currency(item.balance)}</TableCell>
+              <TableCell>
+                {item.bill_path ? (
+                  <ViewBillButton path={item.bill_path} />
+                ) : (
+                  <span className="text-sm text-white/60">—</span>
+                )}
+              </TableCell>
+              {isAdmin && (
+                <TableCell className="text-right">
+                  <EditItemDialog item={item} />
+                </TableCell>
+              )}
+            </TableRow>
+          ))}
+        </TableBody>
+        <TableFooter className="border-white/30 bg-white/10">
+          <TableRow className="border-white/20 hover:bg-transparent">
+            <TableCell className="font-medium">Total</TableCell>
+            <TableCell className="font-medium">
+              {currency(totals.budget)}
+            </TableCell>
+            <TableCell className="font-medium">
+              {currency(totals.spent)}
+            </TableCell>
+            <TableCell className="font-medium">
+              {currency(totals.balance)}
+            </TableCell>
+            <TableCell />
+            {isAdmin && <TableCell />}
+          </TableRow>
+        </TableFooter>
+      </Table>
+
+      {isAdmin && <AddItemForm portfolioId={portfolio.id} />}
+    </div>
   );
 }
