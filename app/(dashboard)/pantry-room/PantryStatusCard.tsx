@@ -1,12 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState, useTransition } from "react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Countdown } from "@/components/Countdown";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "cn";
 import type { Role } from "@/lib/auth/roles";
 import { createClient } from "@/lib/supabase/client";
 import type { Database } from "@/lib/types/database.types";
@@ -70,96 +69,102 @@ export function PantryStatusCard({
   }
 
   return (
-    <Card className="max-w-md">
-      <CardHeader className="flex flex-row items-center justify-between">
-        <CardTitle>{room.label}</CardTitle>
-        <Badge variant={isFree ? "secondary" : "default"}>
+    <div className="bg-brand-gradient flex max-w-md flex-col gap-4 rounded-2xl p-5 text-white shadow-md">
+      <div className="flex items-center justify-between">
+        <h2 className="font-heading text-lg font-semibold">{room.label}</h2>
+        <span
+          className={cn(
+            "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-wide ring-1",
+            isFree ? "bg-white/20 ring-white/30" : "bg-white/90 text-[#422400] ring-white/40"
+          )}
+        >
           {isFree ? "Free" : "Occupied"}
-        </Badge>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {room.location && (
-          <p className="text-sm text-muted-foreground">{room.location}</p>
-        )}
+        </span>
+      </div>
 
-        <p className="text-xs text-muted-foreground">
-          Note: occupy the pantry room for up to 60 minutes. It automatically
-          shows as free again once your time is up.
+      {room.location && <p className="text-sm text-white/80">{room.location}</p>}
+
+      <p className="text-xs text-white/70">
+        Note: occupy the pantry room for up to 60 minutes. It automatically
+        shows as free again once your time is up.
+      </p>
+
+      {!isFree && (
+        <p className="text-sm text-white/90">
+          Occupied by{" "}
+          <span className="font-mono">
+            {room.occupied_by_roll_number ?? "unknown"}
+          </span>
+          {isMine && " (you)"}
         </p>
+      )}
 
-        {!isFree && (
-          <p className="text-sm">
-            Occupied by{" "}
-            <span className="font-mono">
-              {room.occupied_by_roll_number ?? "unknown"}
-            </span>
-            {isMine && " (you)"}
-          </p>
-        )}
+      {!isFree && room.end_time && (
+        <p className="text-sm text-white/90">
+          Free in{" "}
+          <span className="font-mono">
+            <Countdown endTime={room.end_time} onExpire={handleExpire} />
+          </span>
+        </p>
+      )}
 
-        {!isFree && room.end_time && (
-          <p className="text-sm">
-            Free in{" "}
-            <span className="font-mono">
-              <Countdown endTime={room.end_time} onExpire={handleExpire} />
-            </span>
-          </p>
-        )}
-
-        {isFree && canUpdate && (
-          <div className="flex items-end gap-3">
-            <div className="flex flex-col gap-1">
-              <Label htmlFor="duration">Duration (max 60 min)</Label>
-              <Input
-                id="duration"
-                type="number"
-                min={1}
-                max={MAX_DURATION_MINUTES}
-                value={duration}
-                onChange={(e) => setDuration(Number(e.target.value))}
-                className="w-24"
-              />
-            </div>
-            <Button
-              disabled={isPending}
-              onClick={() => {
-                setError(null);
-                startTransition(async () => {
-                  const result = await occupyPantryRoom(room.id, duration);
-                  if (result.error) setError(result.error);
-                  if (result.room) setRoom(result.room);
-                });
-              }}
-            >
-              Occupy
-            </Button>
+      {isFree && canUpdate && (
+        <div className="flex items-end gap-3">
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="duration" className="text-white/90">
+              Duration (max 60 min)
+            </Label>
+            <Input
+              id="duration"
+              type="number"
+              min={1}
+              max={MAX_DURATION_MINUTES}
+              value={duration}
+              onChange={(e) => setDuration(Number(e.target.value))}
+              className="w-24"
+            />
           </div>
-        )}
-
-        {isFree && !canUpdate && (
-          <p className="text-sm text-muted-foreground">
-            Only residents can occupy the pantry room.
-          </p>
-        )}
-
-        {canRelease && (
           <Button
-            variant="outline"
             disabled={isPending}
+            className="bg-white text-[#422400] hover:bg-white/85"
             onClick={() => {
+              setError(null);
               startTransition(async () => {
-                const result = await releasePantryRoom(room.id);
+                const result = await occupyPantryRoom(room.id, duration);
                 if (result.error) setError(result.error);
                 if (result.room) setRoom(result.room);
               });
             }}
           >
-            Release now
+            Occupy
           </Button>
-        )}
+        </div>
+      )}
 
-        {error && <p className="text-sm text-destructive">{error}</p>}
-      </CardContent>
-    </Card>
+      {isFree && !canUpdate && (
+        <p className="text-sm text-white/70">
+          Only residents can occupy the pantry room.
+        </p>
+      )}
+
+      {canRelease && (
+        <Button
+          variant="outline"
+          disabled={isPending}
+          className="border-white/40 bg-transparent text-white hover:bg-white/10 hover:text-white"
+          onClick={() => {
+            startTransition(async () => {
+              const result = await releasePantryRoom(room.id);
+              if (result.error) setError(result.error);
+              if (result.room) setRoom(result.room);
+            });
+          }}
+        >
+          Release now
+        </Button>
+      )}
+
+      {error && <p className="text-sm text-red-100">{error}</p>}
+    </div>
   );
 }
