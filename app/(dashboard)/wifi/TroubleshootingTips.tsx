@@ -2,12 +2,6 @@
 
 import { useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import type { Database } from "@/lib/types/database.types";
 import {
@@ -184,16 +178,17 @@ export function TroubleshootingTips({
   const [newBlockTitle, setNewBlockTitle] = useState("");
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>Basic Troubleshooting</CardTitle>
-      </CardHeader>
-      <CardContent className="flex flex-col gap-4">
-        {blocks.length === 0 && (
-          <p className="text-sm text-muted-foreground">
-            No troubleshooting blocks added yet.
-          </p>
-        )}
+    <div className="flex flex-col gap-3">
+      <h2 className="text-sm font-semibold tracking-widest text-muted-foreground uppercase">
+        Basic Troubleshooting
+      </h2>
+
+      {blocks.length === 0 && (
+        <p className="text-sm text-muted-foreground">
+          No troubleshooting blocks added yet.
+        </p>
+      )}
+      <div className="flex flex-col gap-4">
         {blocks.map((block) => (
           <BlockCard
             key={block.id}
@@ -202,29 +197,29 @@ export function TroubleshootingTips({
             isAdmin={isAdmin}
           />
         ))}
+      </div>
 
-        {isAdmin && (
-          <div className="flex gap-2 pt-2">
-            <Input
-              value={newBlockTitle}
-              onChange={(e) => setNewBlockTitle(e.target.value)}
-              placeholder="New block title (e.g. Router Issues)"
-            />
-            <Button
-              disabled={isPending || !newBlockTitle.trim()}
-              onClick={() => {
-                const title = newBlockTitle;
-                startTransition(async () => {
-                  const result = await addTroubleshootingBlock(title);
-                  if (!result.error) setNewBlockTitle("");
-                });
-              }}
-            >
-              Add block
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+      {isAdmin && (
+        <div className="flex gap-2 pt-1">
+          <Input
+            value={newBlockTitle}
+            onChange={(e) => setNewBlockTitle(e.target.value)}
+            placeholder="New block title (e.g. Router Issues)"
+          />
+          <Button
+            disabled={isPending || !newBlockTitle.trim()}
+            onClick={() => {
+              const title = newBlockTitle;
+              startTransition(async () => {
+                const result = await addTroubleshootingBlock(title);
+                if (!result.error) setNewBlockTitle("");
+              });
+            }}
+          >
+            Add block
+          </Button>
+        </div>
+      )}
+    </div>
   );
 }
