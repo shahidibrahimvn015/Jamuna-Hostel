@@ -40,9 +40,6 @@ export default async function WifiPage() {
     <div className="flex flex-col gap-6">
       <div>
         <h1 className="text-xl font-semibold">WiFi / LAN</h1>
-        <p className="text-sm text-muted-foreground">
-          Official network setup pages, troubleshooting tips and complaints.
-        </p>
       </div>
 
       <OfficialLinks />
