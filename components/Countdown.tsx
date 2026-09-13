@@ -16,21 +16,27 @@ export function Countdown({
   endTime: string;
   onExpire?: () => void;
 }) {
-  const [now, setNow] = useState(() => Date.now());
+  // Starts null rather than Date.now(): the server renders this too, and a
+  // clock-derived first render never matches the client's, which threw
+  // "Hydration failed because the server rendered text didn't match" and made
+  // React throw away and re-render the tree. Both sides now agree on the
+  // placeholder, and the real time appears once mounted.
+  const [now, setNow] = useState<number | null>(null);
 
   useEffect(() => {
+    setNow(Date.now());
     const interval = setInterval(() => setNow(Date.now()), 1000);
     return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
-    if (now >= new Date(endTime).getTime()) {
+    if (now !== null && now >= new Date(endTime).getTime()) {
       onExpire?.();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [now, endTime]);
 
-  const remaining = new Date(endTime).getTime() - now;
+  if (now === null) return <span>--:--</span>;
 
-  return <span>{formatRemaining(remaining)}</span>;
+  return <span>{formatRemaining(new Date(endTime).getTime() - now)}</span>;
 }

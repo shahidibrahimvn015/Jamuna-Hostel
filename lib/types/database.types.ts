@@ -13,6 +13,10 @@ export type Role = "admin" | "resident" | "viewer";
 export type PantryStatus = "free" | "occupied";
 export type TicketStatus = "open" | "resolved";
 export type HostelRepSection = "office" | "council";
+export type WashingMachineFloor = "ground" | "1st" | "2nd" | "3rd";
+export type WashingMachineModel = "automatic" | "semi_automatic";
+export type WashingMachineState = "working" | "maintenance";
+export type WashingSlotKind = "wash" | "washer" | "dryer";
 
 type Table<Row, Insert, Update = Partial<Insert>> = {
   Row: Row;
@@ -202,6 +206,48 @@ export interface Database {
           id?: number;
           per_head_amount?: number;
           total_resident_count_override?: number | null;
+        }
+      >;
+      washing_machines: Table<
+        {
+          id: number;
+          machine_code: string;
+          floor: WashingMachineFloor;
+          model: WashingMachineModel;
+          status: WashingMachineState;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          machine_code: string;
+          floor: WashingMachineFloor;
+          model: WashingMachineModel;
+          status?: WashingMachineState;
+        }
+      >;
+      washing_machine_slots: Table<
+        {
+          id: number;
+          machine_id: number;
+          slot: WashingSlotKind;
+          max_minutes: number;
+          status: PantryStatus;
+          occupied_by: string | null;
+          occupied_by_roll_number: string | null;
+          started_at: string | null;
+          end_time: string | null;
+          created_at: string;
+          updated_at: string;
+        },
+        {
+          machine_id: number;
+          slot: WashingSlotKind;
+          max_minutes: number;
+          status?: PantryStatus;
+          occupied_by?: string | null;
+          occupied_by_roll_number?: string | null;
+          started_at?: string | null;
+          end_time?: string | null;
         }
       >;
       notices: Table<
