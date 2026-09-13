@@ -103,7 +103,11 @@ function SlotRow({
   role: Role | null | undefined;
   onChange: (slot: Slot) => void;
 }) {
-  const [duration, setDuration] = useState(slot.max_minutes);
+  // Half the cap, so the common case is one tap rather than editing down
+  // from the maximum.
+  const [duration, setDuration] = useState(
+    Math.max(1, Math.round(slot.max_minutes / 2))
+  );
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const reconciledRef = useRef(false);
@@ -133,7 +137,7 @@ function SlotRow({
           className={cn(
             "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-wide ring-1",
             isFree
-              ? "bg-white/20 ring-white/30"
+              ? "bg-emerald-400/30 ring-emerald-300/50"
               : "bg-white/90 text-[#422400] ring-white/40"
           )}
         >

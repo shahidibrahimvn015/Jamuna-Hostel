@@ -25,7 +25,9 @@ export function PantryStatusCard({
   role: Role | null | undefined;
 }) {
   const [room, setRoom] = useState(initialRoom);
-  const [duration, setDuration] = useState(30);
+  // Half the cap, derived rather than hardcoded so it tracks
+  // MAX_DURATION_MINUTES if that ever changes.
+  const [duration, setDuration] = useState(MAX_DURATION_MINUTES / 2);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const reconciledRef = useRef(false);
@@ -75,7 +77,7 @@ export function PantryStatusCard({
         <span
           className={cn(
             "inline-flex items-center rounded-full px-3 py-1 text-xs font-medium tracking-wide ring-1",
-            isFree ? "bg-white/20 ring-white/30" : "bg-white/90 text-[#422400] ring-white/40"
+            isFree ? "bg-emerald-400/30 ring-emerald-300/50" : "bg-white/90 text-[#422400] ring-white/40"
           )}
         >
           {isFree ? "Free" : "Occupied"}
