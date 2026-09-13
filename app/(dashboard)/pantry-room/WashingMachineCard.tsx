@@ -282,7 +282,7 @@ export function WashingMachineCard({
       </div>
 
       {underMaintenance ? (
-        <div className="rounded-[10px] bg-white/90 px-3 py-2 text-sm font-medium text-[#422400]">
+        <div className="rounded-[10px] bg-red-400/30 px-3 py-2 text-sm font-medium ring-1 ring-red-300/50">
           Under maintenance
         </div>
       ) : (
