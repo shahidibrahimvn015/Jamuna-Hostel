@@ -26,6 +26,10 @@ export default async function WifiPage() {
   ]);
 
   const isAdmin = profile?.role === "admin";
+  // Raising a ticket is a resident action: viewers can read the WiFi info and
+  // troubleshooting steps, but the hostel only handles complaints from people
+  // who actually live here.
+  const canRaiseTicket = profile?.role === "resident" || isAdmin;
 
   let adminTickets: typeof myTickets = null;
   if (isAdmin) {
@@ -46,20 +50,30 @@ export default async function WifiPage() {
 
       <TroubleshootingTips blocks={blocks ?? []} tips={tips ?? []} isAdmin={isAdmin} />
 
-      <ComplaintForm smailId={user?.email ?? ""} />
+      {canRaiseTicket ? (
+        <ComplaintForm smailId={user?.email ?? ""} />
+      ) : (
+        <p className="text-sm text-muted-foreground">
+          Only hostel residents can raise a WiFi complaint. If you live in
+          Jamuna Hostel and are seeing this, ask an admin to add your roll
+          number to the residents list.
+        </p>
+      )}
 
-      <Card>
-        <CardHeader>
-          <CardTitle>My raised tickets</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <TicketsTable
-            tickets={myTickets ?? []}
-            currentUserId={user?.id ?? ""}
-            isAdmin={isAdmin}
-          />
-        </CardContent>
-      </Card>
+      {(canRaiseTicket || (myTickets ?? []).length > 0) && (
+        <Card>
+          <CardHeader>
+            <CardTitle>My raised tickets</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <TicketsTable
+              tickets={myTickets ?? []}
+              currentUserId={user?.id ?? ""}
+              isAdmin={isAdmin}
+            />
+          </CardContent>
+        </Card>
+      )}
 
       {isAdmin && (
         <Card>

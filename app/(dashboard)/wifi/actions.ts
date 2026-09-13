@@ -112,6 +112,18 @@ export async function logTicket(input: {
 
   if (!user) return { error: "Not signed in" };
 
+  // Hiding the form in the UI is not enforcement -- this action is callable
+  // directly. Residents and admins only.
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("role")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  if (profile?.role !== "resident" && profile?.role !== "admin") {
+    return { error: "Only hostel residents can raise a WiFi complaint." };
+  }
+
   const { error } = await supabase
     .from("wifi_tickets")
     .insert({ ...parsed.data, raised_by: user.id });
