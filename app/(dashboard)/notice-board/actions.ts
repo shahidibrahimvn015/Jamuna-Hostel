@@ -1,7 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { uploadNoticePosterImage } from "@/lib/storage";
+import {
+  removeStorageObject,
+  uploadNoticePosterImage,
+} from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 
 export async function addNotice(formData: FormData) {
@@ -45,9 +48,18 @@ export async function addNotice(formData: FormData) {
 
 export async function deleteNotice(id: number) {
   const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("notices")
+    .select("poster_path")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase.from("notices").delete().eq("id", id);
 
   if (error) return { error: error.message };
+
+  await removeStorageObject("notice-posters", existing?.poster_path);
 
   revalidatePath("/notice-board");
   return { error: null };

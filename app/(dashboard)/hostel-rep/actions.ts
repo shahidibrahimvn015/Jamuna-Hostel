@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { uploadRepPhoto } from "@/lib/storage";
+import { removeStorageObject, uploadRepPhoto } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 
 const optionalText = z
@@ -79,6 +79,16 @@ export async function updateHostelRep(id: number, formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  // Read the outgoing photo before overwriting the column -- once the update
+  // lands, the only pointer to the old file is gone and it can never be
+  // cleaned up.
+  const { data: existing } = await supabase
+    .from("hostel_reps")
+    .select("photo_path")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase
     .from("hostel_reps")
     .update(update)
@@ -86,15 +96,28 @@ export async function updateHostelRep(id: number, formData: FormData) {
 
   if (error) return { error: error.message };
 
+  if (update.photo_path && existing?.photo_path !== update.photo_path) {
+    await removeStorageObject("rep-photos", existing?.photo_path);
+  }
+
   revalidatePath("/hostel-rep");
   return { error: null };
 }
 
 export async function deleteHostelRep(id: number) {
   const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("hostel_reps")
+    .select("photo_path")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase.from("hostel_reps").delete().eq("id", id);
 
   if (error) return { error: error.message };
+
+  await removeStorageObject("rep-photos", existing?.photo_path);
 
   revalidatePath("/hostel-rep");
   return { error: null };
