@@ -2,7 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getBillSignedUrl, uploadBillPdf } from "@/lib/storage";
+import {
+  getBillSignedUrl,
+  removeStorageObject,
+  uploadBillPdf,
+} from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
 
 export async function createPortfolio(formData: FormData) {
@@ -62,17 +66,35 @@ export async function createBudgetItem(formData: FormData) {
 
   if (error || !inserted) return { error: error?.message ?? "Insert failed" };
 
-  const billPath = await maybeUploadBill(
-    formData,
-    parsed.data.portfolio_id,
-    inserted.id
-  ).catch(() => null);
+  // The row exists by this point, so a bill failure must not be silent: it
+  // would leave an item with no bill and no explanation. Report it instead,
+  // naming the item so it is clear the item itself was saved.
+  let billPath: string | null = null;
+  try {
+    billPath = await maybeUploadBill(
+      formData,
+      parsed.data.portfolio_id,
+      inserted.id
+    );
+  } catch (e) {
+    revalidatePath("/budget");
+    return {
+      error: `Item saved, but the bill upload failed: ${(e as Error).message}`,
+    };
+  }
 
   if (billPath) {
-    await supabase
+    const { error: billError } = await supabase
       .from("budget_items")
       .update({ bill_path: billPath })
       .eq("id", inserted.id);
+
+    if (billError) {
+      revalidatePath("/budget");
+      return {
+        error: `Item saved, but linking the bill failed: ${billError.message}`,
+      };
+    }
   }
 
   revalidatePath("/budget");
@@ -93,9 +115,12 @@ export async function updateBudgetItem(id: number, formData: FormData) {
   }
 
   const supabase = await createClient();
+
+  // bill_path comes along for the ride: once the update overwrites it, the only
+  // pointer to the old PDF is gone and it can never be cleaned up.
   const { data: existing } = await supabase
     .from("budget_items")
-    .select("portfolio_id")
+    .select("portfolio_id, bill_path")
     .eq("id", id)
     .single();
 
@@ -107,12 +132,16 @@ export async function updateBudgetItem(id: number, formData: FormData) {
   } = { ...parsed.data };
 
   if (existing) {
-    const billPath = await maybeUploadBill(
-      formData,
-      existing.portfolio_id,
-      id
-    ).catch(() => null);
-    if (billPath) update.bill_path = billPath;
+    try {
+      const billPath = await maybeUploadBill(
+        formData,
+        existing.portfolio_id,
+        id
+      );
+      if (billPath) update.bill_path = billPath;
+    } catch (e) {
+      return { error: `Bill upload failed: ${(e as Error).message}` };
+    }
   }
 
   const { error } = await supabase
@@ -122,15 +151,28 @@ export async function updateBudgetItem(id: number, formData: FormData) {
 
   if (error) return { error: error.message };
 
+  if (update.bill_path && existing?.bill_path !== update.bill_path) {
+    await removeStorageObject("bills", existing?.bill_path);
+  }
+
   revalidatePath("/budget");
   return { error: null };
 }
 
 export async function deleteBudgetItem(id: number) {
   const supabase = await createClient();
+
+  const { data: existing } = await supabase
+    .from("budget_items")
+    .select("bill_path")
+    .eq("id", id)
+    .maybeSingle();
+
   const { error } = await supabase.from("budget_items").delete().eq("id", id);
 
   if (error) return { error: error.message };
+
+  await removeStorageObject("bills", existing?.bill_path);
 
   revalidatePath("/budget");
   return { error: null };

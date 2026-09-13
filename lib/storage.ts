@@ -71,7 +71,7 @@ export async function uploadRepPhoto(file: File) {
  * succeeded.
  */
 export async function removeStorageObject(
-  bucket: "rep-photos" | "notice-posters",
+  bucket: "rep-photos" | "notice-posters" | "bills",
   path: string | null | undefined
 ) {
   if (!path) return;
