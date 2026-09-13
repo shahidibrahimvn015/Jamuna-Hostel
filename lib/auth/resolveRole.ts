@@ -47,3 +47,53 @@ export async function upsertProfileWithResolvedRole(user: {
 
   return role;
 }
+
+/**
+ * Recomputes profiles.role for anyone holding one of these roll numbers.
+ *
+ * Role is otherwise only resolved at login, so adding someone to the residents
+ * list left them a viewer -- unable to occupy the pantry room, use a washing
+ * machine or raise a WiFi ticket -- until they happened to sign out and back
+ * in. Nobody would guess that, so the residents admin actions call this
+ * immediately after changing the list.
+ *
+ * Uses the service-role client deliberately: profiles.role is not client
+ * writable (RLS restricts updates to your own row, and the 0011 trigger rejects
+ * role changes), and that is exactly the protection we want to keep. Callers
+ * MUST verify the caller is an admin before calling this.
+ */
+export async function syncRolesForRollNumbers(rollNumbers: string[]) {
+  const unique = [...new Set(rollNumbers.filter(Boolean))];
+  if (unique.length === 0) return;
+
+  const supabaseAdmin = createAdminClient();
+
+  const { data: profiles } = await supabaseAdmin
+    .from("profiles")
+    .select("id, email, roll_number")
+    .in("roll_number", unique);
+
+  if (!profiles || profiles.length === 0) return;
+
+  // Read the list back rather than assuming the caller added or removed: the
+  // same function then serves both, and cannot drift from resolveRole's rules.
+  const { data: residents } = await supabaseAdmin
+    .from("residents")
+    .select("roll_number")
+    .in("roll_number", unique);
+
+  const residentRolls = new Set((residents ?? []).map((r) => r.roll_number));
+  const adminEmails = getAdminEmails();
+
+  await Promise.all(
+    profiles.map((profile) => {
+      const role: Role = adminEmails.includes(profile.email.toLowerCase())
+        ? "admin"
+        : residentRolls.has(profile.roll_number)
+          ? "resident"
+          : "viewer";
+
+      return supabaseAdmin.from("profiles").update({ role }).eq("id", profile.id);
+    })
+  );
+}

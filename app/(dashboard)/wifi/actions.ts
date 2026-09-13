@@ -124,6 +124,24 @@ export async function logTicket(input: {
     return { error: "Only hostel residents can raise a WiFi complaint." };
   }
 
+  // The 0016 trigger is what actually enforces this; checking here first turns
+  // a raw Postgres exception into a message that says when they can retry.
+  if (profile.role !== "admin") {
+    const hourAgo = new Date(Date.now() - 60 * 60_000).toISOString();
+    const { count } = await supabase
+      .from("wifi_tickets")
+      .select("*", { count: "exact", head: true })
+      .eq("raised_by", user.id)
+      .gt("created_at", hourAgo);
+
+    if ((count ?? 0) >= 5) {
+      return {
+        error:
+          "You have raised 5 tickets in the last hour. Please wait a while before raising another.",
+      };
+    }
+  }
+
   const { error } = await supabase
     .from("wifi_tickets")
     .insert({ ...parsed.data, raised_by: user.id });
