@@ -52,6 +52,11 @@ export function BulkImportDialog() {
           onChange={(e) => setText(e.target.value)}
           placeholder={"ed24b064,ed24b061,ed24b062"}
           rows={10}
+          // Textarea defaults to field-sizing-content, which grows the box to
+          // fit its contents and makes `rows` inert. Pasting a whole hostel's
+          // roll numbers then pushed the Import button off-screen. Fixed
+          // sizing keeps the box ten rows tall and scrolls the text inside.
+          className="field-sizing-fixed max-h-56 overflow-y-auto font-mono text-xs"
         />
 
         {result && (
