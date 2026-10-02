@@ -1,5 +1,6 @@
 "use client";
 
+import { Phone } from "lucide-react";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +9,15 @@ import type { Database } from "@/lib/types/database.types";
 import { addEmergencyContact, deleteEmergencyContact } from "./actions";
 
 type Contact = Database["public"]["Tables"]["emergency_contacts"]["Row"];
+
+// tel: hands off to the OS, which on Android offers whichever apps can place
+// the call (Phone, WhatsApp, Truecaller...). Strip formatting but keep a
+// leading + so international numbers still dial.
+function telHref(phone: string) {
+  const trimmed = phone.trim();
+  const plus = trimmed.startsWith("+") ? "+" : "";
+  return `tel:${plus}${trimmed.replace(/\D/g, "")}`;
+}
 
 const actionButtonClass =
   "rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0] hover:text-[#422400]";
@@ -39,10 +49,24 @@ export function EmergencyContactsCard({
           key={contact.id}
           className="bg-brand-gradient flex items-center justify-between gap-3 rounded-2xl p-4 text-white shadow-md"
         >
-          <div>
-            <p className="font-medium">{contact.role_title}</p>
-            <p className="text-sm text-white/90">{contact.phone}</p>
-          </div>
+          {/* The link wraps only the contact details: a <button> inside an
+              <a> is invalid markup, and tapping Remove would also place the
+              call. */}
+          <a
+            href={telHref(contact.phone)}
+            aria-label={`Call ${contact.role_title}`}
+            className="-m-2 flex flex-1 items-center gap-3 rounded-xl p-2 transition-colors hover:bg-white/10 active:bg-white/15"
+          >
+            <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-white/15 ring-1 ring-white/25">
+              <Phone className="size-4" />
+            </span>
+            <span>
+              <span className="block font-medium">{contact.role_title}</span>
+              <span className="block text-sm text-white/90">
+                {contact.phone}
+              </span>
+            </span>
+          </a>
           {isAdmin && (
             <Button
               size="sm"
