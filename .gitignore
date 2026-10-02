@@ -40,3 +40,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# hostel roster spreadsheets -- these carry student names and smail addresses,
+# and the repo is public. Keep them local.
+*.xlsx
+*.xls
+*.csv

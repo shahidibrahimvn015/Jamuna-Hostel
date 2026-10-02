@@ -68,32 +68,62 @@ export async function syncRolesForRollNumbers(rollNumbers: string[]) {
 
   const supabaseAdmin = createAdminClient();
 
-  const { data: profiles } = await supabaseAdmin
-    .from("profiles")
-    .select("id, email, roll_number")
-    .in("roll_number", unique);
+  // PostgREST puts `in.(...)` filters in the query string, so a whole hostel's
+  // worth of roll numbers in one call builds a URL long enough to be refused.
+  // Everything below is chunked for that reason, not for throughput.
+  const ROLL_CHUNK = 150;
+  const ID_CHUNK = 100; // uuids are 36 chars, so these chunks must be smaller
 
-  if (!profiles || profiles.length === 0) return;
+  const profiles: { id: string; email: string; roll_number: string }[] = [];
+  const residentRolls = new Set<string>();
 
-  // Read the list back rather than assuming the caller added or removed: the
-  // same function then serves both, and cannot drift from resolveRole's rules.
-  const { data: residents } = await supabaseAdmin
-    .from("residents")
-    .select("roll_number")
-    .in("roll_number", unique);
+  for (const chunk of chunksOf(unique, ROLL_CHUNK)) {
+    const { data: found } = await supabaseAdmin
+      .from("profiles")
+      .select("id, email, roll_number")
+      .in("roll_number", chunk);
 
-  const residentRolls = new Set((residents ?? []).map((r) => r.roll_number));
+    if (found) profiles.push(...found);
+
+    // Read the list back rather than assuming the caller added or removed: the
+    // same function then serves both, and cannot drift from resolveRole's rules.
+    const { data: residents } = await supabaseAdmin
+      .from("residents")
+      .select("roll_number")
+      .in("roll_number", chunk);
+
+    for (const row of residents ?? []) residentRolls.add(row.roll_number);
+  }
+
+  if (profiles.length === 0) return;
+
   const adminEmails = getAdminEmails();
+  const idsByRole: Record<Role, string[]> = { admin: [], resident: [], viewer: [] };
 
-  await Promise.all(
-    profiles.map((profile) => {
-      const role: Role = adminEmails.includes(profile.email.toLowerCase())
-        ? "admin"
-        : residentRolls.has(profile.roll_number)
-          ? "resident"
-          : "viewer";
+  for (const profile of profiles) {
+    const role: Role = adminEmails.includes(profile.email.toLowerCase())
+      ? "admin"
+      : residentRolls.has(profile.roll_number)
+        ? "resident"
+        : "viewer";
 
-      return supabaseAdmin.from("profiles").update({ role }).eq("id", profile.id);
-    })
-  );
+    idsByRole[role].push(profile.id);
+  }
+
+  // Group by target role instead of updating per profile. Importing a full
+  // hostel used to mean one request per matched profile, fired concurrently --
+  // hundreds at once, enough to hit rate limits or exhaust the serverless
+  // function's time. There are only three roles, so this is a handful of
+  // requests no matter how many people are imported.
+  for (const role of Object.keys(idsByRole) as Role[]) {
+    for (const ids of chunksOf(idsByRole[role], ID_CHUNK)) {
+      await supabaseAdmin.from("profiles").update({ role }).in("id", ids);
+    }
+  }
+}
+
+function chunksOf<T>(items: T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < items.length; i += size) out.push(items.slice(i, i + size));
+  return out;
 }
