@@ -1,27 +1,67 @@
 "use client";
 
-import { ChevronRight, LayoutDashboard, LogOut, UserCog } from "lucide-react";
+import {
+  ChevronRight,
+  ExternalLink,
+  LayoutDashboard,
+  LogOut,
+  MessageSquareWarning,
+  UserCog,
+  type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "cn";
-import { DASHBOARD_SECTIONS } from "@/lib/constants/sections";
+import type { Role } from "@/lib/auth/roles";
+import {
+  COMPLAINTS_SHEET_URL,
+  DASHBOARD_SECTIONS,
+} from "@/lib/constants/sections";
+
+type NavItem = {
+  href: string;
+  label: string;
+  icon: LucideIcon;
+  // Leaves the app: rendered as a plain anchor opening in a new tab, and never
+  // highlighted as the active route.
+  external?: boolean;
+};
+
+const linkClass =
+  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors";
 
 export function SidebarNav({
-  isAdmin,
+  role,
   onSignOut,
 }: {
-  isAdmin: boolean;
+  role: Role | null | undefined;
   onSignOut: () => void | Promise<void>;
 }) {
   const pathname = usePathname();
 
-  const items = [
+  const isAdmin = role === "admin";
+  // The complaints register is for people who actually live here. Hiding the
+  // link is presentation only -- who can open the sheet is decided by its
+  // Google Drive sharing settings, not by this app.
+  const canSeeComplaints = isAdmin || role === "resident";
+
+  const items: NavItem[] = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
     ...DASHBOARD_SECTIONS.map((section) => ({
       href: section.href,
       label: section.title,
       icon: section.icon,
     })),
+    ...(canSeeComplaints
+      ? [
+          {
+            href: COMPLAINTS_SHEET_URL,
+            label: "Complaints",
+            icon: MessageSquareWarning,
+            external: true,
+          },
+        ]
+      : []),
     ...(isAdmin
       ? [{ href: "/admin/residents", label: "Manage Residents", icon: UserCog }]
       : []),
@@ -33,23 +73,44 @@ export function SidebarNav({
 
       <ul className="flex flex-col gap-1">
         {items.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = !item.external && pathname === item.href;
           const Icon = item.icon;
+
+          const inner = (
+            <>
+              <Icon className="size-4 shrink-0" />
+              <span className="flex-1">{item.label}</span>
+              {item.external ? (
+                <ExternalLink className="size-4 shrink-0 opacity-70" />
+              ) : (
+                <ChevronRight className="size-4 shrink-0 opacity-70" />
+              )}
+            </>
+          );
+
+          const className = cn(
+            linkClass,
+            isActive
+              ? "bg-white/15 font-medium text-white"
+              : "text-white/80 hover:bg-white/10 hover:text-white"
+          );
+
           return (
             <li key={item.href}>
-              <Link
-                href={item.href}
-                className={cn(
-                  "flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm transition-colors",
-                  isActive
-                    ? "bg-white/15 font-medium text-white"
-                    : "text-white/80 hover:bg-white/10 hover:text-white"
-                )}
-              >
-                <Icon className="size-4 shrink-0" />
-                <span className="flex-1">{item.label}</span>
-                <ChevronRight className="size-4 shrink-0 opacity-70" />
-              </Link>
+              {item.external ? (
+                <a
+                  href={item.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className={className}
+                >
+                  {inner}
+                </a>
+              ) : (
+                <Link href={item.href} className={className}>
+                  {inner}
+                </Link>
+              )}
             </li>
           );
         })}

@@ -3,15 +3,16 @@
 import { Dialog as DialogPrimitive } from "@base-ui/react/dialog";
 import { LayoutGrid, X } from "lucide-react";
 import { useState } from "react";
+import type { Role } from "@/lib/auth/roles";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { SidebarNav } from "./SidebarNav";
 
 export function MobileNav({
-  isAdmin,
+  role,
   onSignOut,
 }: {
-  isAdmin: boolean;
+  role: Role | null | undefined;
   onSignOut: () => void | Promise<void>;
 }) {
   const [open, setOpen] = useState(false);
@@ -52,7 +53,7 @@ export function MobileNav({
             </DialogPrimitive.Close>
           </div>
           <div onClick={() => setOpen(false)}>
-            <SidebarNav isAdmin={isAdmin} onSignOut={onSignOut} />
+            <SidebarNav role={role} onSignOut={onSignOut} />
           </div>
         </DialogPrimitive.Popup>
       </DialogPrimitive.Portal>

@@ -35,6 +35,12 @@ export const SECTION_COLOR_CLASSES: Record<
   },
 };
 
+// The hostel's complaints register is a Google Sheet rather than a page in this
+// app, so it is a sidebar link out instead of a DashboardSection -- those all
+// become internal routes.
+export const COMPLAINTS_SHEET_URL =
+  "https://docs.google.com/spreadsheets/d/1OufiVzpS6XDVLj6cEBYy28c9h-46ifRFFSxkjH9WCfs/edit?usp=sharing";
+
 // Notice Board intentionally has no entry here: it no longer appears in the
 // sidebar nav or the overview grid — it now lives as a "Latest notifications"
 // widget on the dashboard home page (see app/(dashboard)/dashboard/page.tsx),

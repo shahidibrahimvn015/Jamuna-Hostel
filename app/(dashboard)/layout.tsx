@@ -31,13 +31,13 @@ export default async function DashboardLayout({
       {/* Full-height left rail on desktop — runs top to bottom, independent
           of the header (which only spans the content column beside it). */}
       <nav className="bg-sidebar-pattern hidden w-64 shrink-0 p-5 md:block">
-        <SidebarNav isAdmin={profile?.role === "admin"} onSignOut={signOut} />
+        <SidebarNav role={profile?.role} onSignOut={signOut} />
       </nav>
 
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="bg-hero-pattern grid grid-cols-[1fr_auto_1fr] items-center gap-2 px-4 py-3 text-white">
           <div className="flex items-center gap-2 justify-self-start">
-            <MobileNav isAdmin={profile?.role === "admin"} onSignOut={signOut} />
+            <MobileNav role={profile?.role} onSignOut={signOut} />
             <div className="hidden md:block">
               <ThemeToggle className="text-white/90" />
             </div>
