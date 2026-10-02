@@ -156,16 +156,14 @@ export interface Database {
       emergency_contacts: Table<
         {
           id: number;
-          name: string;
-          role_title: string | null;
+          role_title: string;
           phone: string;
           extra: Json | null;
           sort_order: number;
         },
         {
-          name: string;
+          role_title: string;
           phone: string;
-          role_title?: string | null;
           extra?: Json | null;
           sort_order?: number;
         }

@@ -40,10 +40,7 @@ export function EmergencyContactsCard({
           className="bg-brand-gradient flex items-center justify-between gap-3 rounded-2xl p-4 text-white shadow-md"
         >
           <div>
-            <p className="font-medium">{contact.name}</p>
-            {contact.role_title && (
-              <p className="text-xs text-white/75">{contact.role_title}</p>
-            )}
+            <p className="font-medium">{contact.role_title}</p>
             <p className="text-sm text-white/90">{contact.phone}</p>
           </div>
           {isAdmin && (
@@ -76,12 +73,13 @@ export function EmergencyContactsCard({
           className="flex flex-wrap items-end gap-2 pt-1"
         >
           <div className="flex flex-col gap-1">
-            <Label htmlFor="name">Name</Label>
-            <Input id="name" name="name" required />
-          </div>
-          <div className="flex flex-col gap-1">
             <Label htmlFor="role_title">Role</Label>
-            <Input id="role_title" name="role_title" />
+            <Input
+              id="role_title"
+              name="role_title"
+              placeholder="Security Desk"
+              required
+            />
           </div>
           <div className="flex flex-col gap-1">
             <Label htmlFor="phone">Phone</Label>

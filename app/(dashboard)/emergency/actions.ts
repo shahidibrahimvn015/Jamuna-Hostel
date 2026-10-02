@@ -40,15 +40,13 @@ export async function updateFirstAidInfo(formData: FormData) {
 }
 
 const contactSchema = z.object({
-  name: z.string().trim().min(1, "Name is required"),
-  role_title: optionalText,
+  role_title: z.string().trim().min(1, "Role is required"),
   phone: z.string().trim().min(1, "Phone is required"),
 });
 
 export async function addEmergencyContact(formData: FormData) {
   const parsed = contactSchema.safeParse({
-    name: formData.get("name"),
-    role_title: formData.get("role_title") || null,
+    role_title: formData.get("role_title"),
     phone: formData.get("phone"),
   });
 
