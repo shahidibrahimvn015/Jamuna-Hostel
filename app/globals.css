@@ -194,4 +194,19 @@
     background-repeat: no-repeat;
     background-attachment: fixed;
   }
+
+  /* From md up a 16rem sidebar sits to the left, so the header and hero only
+     occupy the column beside it -- but `fixed` lays the image out against the
+     viewport, which left the artwork's first 16rem cropped away behind the
+     sidebar and the whole composition shifted. Sizing the image to the column
+     instead, and keeping it pinned right (the column's right edge IS the
+     viewport's), lands it exactly in the visible area. Still one image across
+     header and hero, which is why `fixed` is here in the first place. */
+  @media (min-width: 48rem) {
+    .bg-hero-pattern {
+      background-size:
+        calc(100vw - 16rem) auto,
+        cover;
+    }
+  }
 }

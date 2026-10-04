@@ -11,11 +11,29 @@ export async function addNotice(formData: FormData) {
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const eventDate = String(formData.get("event_date") ?? "").trim();
+  const linkUrl = String(formData.get("link_url") ?? "").trim();
   const file = formData.get("poster");
 
   if (!title) return { error: "Title is required" };
   if (!description) return { error: "Description is required" };
   if (!eventDate) return { error: "Date is required" };
+
+  // This value is rendered as an href, so restrict it to http(s) rather than
+  // accepting any string: javascript: and data: URLs would otherwise run in
+  // the clicker's session. Admins are trusted, but a dead or hostile link
+  // costs nothing to rule out here.
+  if (linkUrl) {
+    let ok = false;
+    try {
+      const parsed = new URL(linkUrl);
+      ok = parsed.protocol === "http:" || parsed.protocol === "https:";
+    } catch {
+      ok = false;
+    }
+    if (!ok) {
+      return { error: "Link must be a valid http:// or https:// URL" };
+    }
+  }
 
   const supabase = await createClient();
   const {
@@ -37,6 +55,7 @@ export async function addNotice(formData: FormData) {
     description,
     event_date: eventDate,
     poster_path: posterPath,
+    link_url: linkUrl || null,
     created_by: user?.id,
   });
 

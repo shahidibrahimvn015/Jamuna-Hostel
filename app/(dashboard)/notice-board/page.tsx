@@ -16,6 +16,7 @@ export default async function NoticeBoardPage() {
     title: n.title,
     description: n.description,
     event_date: n.event_date,
+    linkUrl: n.link_url,
     posterUrl: n.poster_path
       ? supabase.storage.from("notice-posters").getPublicUrl(n.poster_path)
           .data.publicUrl

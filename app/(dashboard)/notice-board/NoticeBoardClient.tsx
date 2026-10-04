@@ -1,5 +1,6 @@
 "use client";
 
+import { ExternalLink } from "lucide-react";
 import Image from "next/image";
 import { useRef, useState, useTransition } from "react";
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ export type NoticeItem = {
   title: string;
   description: string;
   event_date: string;
+  linkUrl: string | null;
   posterUrl: string | null;
 };
 
@@ -61,6 +63,18 @@ function AddNoticeForm() {
           <div className="flex flex-col gap-1">
             <Label htmlFor="event_date">Date</Label>
             <Input id="event_date" name="event_date" type="date" required />
+          </div>
+          <div className="flex flex-col gap-1">
+            <Label htmlFor="link_url">Link (optional)</Label>
+            <Input
+              id="link_url"
+              name="link_url"
+              type="url"
+              placeholder="https://forms.gle/..."
+            />
+            <p className="text-xs text-muted-foreground">
+              Shown as an &quot;Open&quot; button on the notice.
+            </p>
           </div>
           <div className="flex flex-col gap-1">
             <Label htmlFor="poster">Poster photo (optional)</Label>
@@ -127,20 +141,33 @@ export function NoticeBoardClient({
                   {notice.description}
                 </p>
               </div>
-              {isAdmin && (
-                <Button
-                  size="sm"
-                  className="w-fit rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0]"
-                  disabled={isPending}
-                  onClick={() => {
-                    startTransition(async () => {
-                      await deleteNotice(notice.id);
-                    });
-                  }}
-                >
-                  Remove
-                </Button>
-              )}
+              <div className="flex flex-wrap items-center gap-2">
+                {notice.linkUrl && (
+                  <a
+                    href={notice.linkUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-[10px] border border-black/10 bg-[#F5EFE4] px-3 py-1.5 text-sm font-medium text-[#422400] shadow-md transition-colors hover:bg-[#ECE3D0]"
+                  >
+                    Open
+                    <ExternalLink className="size-3.5" />
+                  </a>
+                )}
+                {isAdmin && (
+                  <Button
+                    size="sm"
+                    className="w-fit rounded-[10px] border border-black/10 bg-[#F5EFE4] text-[#422400] shadow-md hover:bg-[#ECE3D0]"
+                    disabled={isPending}
+                    onClick={() => {
+                      startTransition(async () => {
+                        await deleteNotice(notice.id);
+                      });
+                    }}
+                  >
+                    Remove
+                  </Button>
+                )}
+              </div>
             </div>
           </div>
         ))}

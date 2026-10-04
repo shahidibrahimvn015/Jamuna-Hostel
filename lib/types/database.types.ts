@@ -255,6 +255,7 @@ export interface Database {
           description: string;
           event_date: string;
           poster_path: string | null;
+          link_url: string | null;
           created_by: string | null;
           created_at: string;
           updated_at: string;
@@ -264,6 +265,7 @@ export interface Database {
           description: string;
           event_date: string;
           poster_path?: string | null;
+          link_url?: string | null;
           created_by?: string | null;
         }
       >;
