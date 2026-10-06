@@ -19,8 +19,8 @@ export default async function BudgetPage() {
   ] = await Promise.all([
     supabase.from("residents").select("*", { count: "exact", head: true }),
     supabase.from("hostel_settings").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("secretary_portfolios").select("*").order("name"),
-    supabase.from("budget_items").select("*"),
+    supabase.from("secretary_portfolios").select("*").order("id"),
+    supabase.from("budget_items").select("*").order("id"),
   ]);
 
   const isAdmin = profile?.role === "admin";

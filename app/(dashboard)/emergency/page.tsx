@@ -9,7 +9,11 @@ export default async function EmergencyPage() {
 
   const [{ data: info }, { data: contacts }] = await Promise.all([
     supabase.from("first_aid_info").select("*").eq("id", 1).maybeSingle(),
-    supabase.from("emergency_contacts").select("*").order("sort_order"),
+    supabase
+      .from("emergency_contacts")
+      .select("*")
+      .order("sort_order")
+      .order("id"),
   ]);
 
   const isAdmin = profile?.role === "admin";

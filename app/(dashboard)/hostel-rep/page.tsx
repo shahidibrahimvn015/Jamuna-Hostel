@@ -10,7 +10,7 @@ export default async function HostelRepPage() {
     .from("hostel_reps")
     .select("*")
     .order("sort_order")
-    .order("name");
+    .order("id");
 
   const isAdmin = profile?.role === "admin";
   const all = reps ?? [];

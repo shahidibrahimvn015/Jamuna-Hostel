@@ -16,8 +16,16 @@ export default async function WifiPage() {
   const supabase = await createClient();
 
   const [{ data: blocks }, { data: tips }, { data: myTickets }] = await Promise.all([
-    supabase.from("wifi_troubleshooting_blocks").select("*").order("sort_order"),
-    supabase.from("wifi_troubleshooting_tips").select("*").order("sort_order"),
+    supabase
+      .from("wifi_troubleshooting_blocks")
+      .select("*")
+      .order("sort_order")
+      .order("id"),
+    supabase
+      .from("wifi_troubleshooting_tips")
+      .select("*")
+      .order("sort_order")
+      .order("id"),
     supabase
       .from("wifi_tickets")
       .select("*")

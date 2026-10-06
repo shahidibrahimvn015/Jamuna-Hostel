@@ -1,3 +1,4 @@
+import { Analytics } from "@vercel/analytics/next";
 import type { Metadata } from "next";
 import { Geist_Mono, Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -31,6 +32,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           {children}
           <Toaster />
         </ThemeProvider>
+        {/* Vercel Web Analytics. Counts page views only -- no cookies, no
+            per-user tracking. Inert outside Vercel, so local dev and the
+            production build are unaffected. */}
+        <Analytics />
       </body>
     </html>
   );
