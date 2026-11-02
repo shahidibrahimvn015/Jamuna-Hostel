@@ -1,4 +1,5 @@
 import { getSessionProfile } from "@/lib/auth/getSessionProfile";
+import { getResidentCount } from "@/lib/residentCount";
 import { createClient } from "@/lib/supabase/server";
 import { AddPortfolioForm } from "./AddPortfolioForm";
 import { PortfolioSection } from "./PortfolioSection";
@@ -12,12 +13,12 @@ export default async function BudgetPage() {
   const supabase = await createClient();
 
   const [
-    { count: residentCount },
+    residentCount,
     { data: settings },
     { data: portfolios },
     { data: items },
   ] = await Promise.all([
-    supabase.from("residents").select("*", { count: "exact", head: true }),
+    getResidentCount(),
     supabase.from("hostel_settings").select("*").eq("id", 1).maybeSingle(),
     supabase.from("secretary_portfolios").select("*").order("id"),
     supabase.from("budget_items").select("*").order("id"),
