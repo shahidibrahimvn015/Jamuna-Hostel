@@ -160,9 +160,11 @@ create policy "select own or admin" on profiles
 create policy "update own full_name only" on profiles
   for update using (auth.uid() = id)
   with check (auth.uid() = id);
--- NOTE: enforce in application code (or a trigger) that only full_name
--- changes via this policy; role/email/roll_number are written exclusively
--- by the service-role upsert in the auth callback.
+-- NOTE: this policy alone lets a user update ANY column of their own row.
+-- Only full_name is meant to change; role/email/roll_number/created_at are
+-- locked by the guard_profile_privileged_columns trigger (migration 0011),
+-- which must stay. Those columns are written only by the service-role upsert
+-- in the auth callback.
 
 -- =========================================================================
 -- RLS: residents (admin-managed allowlist)

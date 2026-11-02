@@ -8,8 +8,10 @@ import {
   uploadBillPdf,
 } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import { ADMINS_ONLY, isAdminCaller } from "@/lib/auth/requireAdmin";
 
 export async function createPortfolio(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const name = String(formData.get("name") ?? "").trim();
   if (!name) return { error: "Name is required" };
 
@@ -42,6 +44,7 @@ async function maybeUploadBill(
 }
 
 export async function createBudgetItem(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = itemSchema.safeParse({
     portfolio_id: formData.get("portfolio_id"),
     item: formData.get("item"),
@@ -102,6 +105,7 @@ export async function createBudgetItem(formData: FormData) {
 }
 
 export async function updateBudgetItem(id: number, formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = itemSchema
     .omit({ portfolio_id: true })
     .safeParse({
@@ -160,6 +164,7 @@ export async function updateBudgetItem(id: number, formData: FormData) {
 }
 
 export async function deleteBudgetItem(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
 
   const { data: existing } = await supabase

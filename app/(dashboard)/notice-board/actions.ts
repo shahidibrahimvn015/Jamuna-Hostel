@@ -6,8 +6,10 @@ import {
   uploadNoticePosterImage,
 } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import { ADMINS_ONLY, isAdminCaller } from "@/lib/auth/requireAdmin";
 
 export async function addNotice(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const eventDate = String(formData.get("event_date") ?? "").trim();
@@ -66,6 +68,7 @@ export async function addNotice(formData: FormData) {
 }
 
 export async function deleteNotice(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
 
   const { data: existing } = await supabase

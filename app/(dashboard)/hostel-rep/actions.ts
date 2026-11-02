@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { removeStorageObject, uploadRepPhoto } from "@/lib/storage";
 import { createClient } from "@/lib/supabase/server";
+import { ADMINS_ONLY, isAdminCaller } from "@/lib/auth/requireAdmin";
 
 const optionalText = z
   .string()
@@ -38,6 +39,7 @@ async function extractPhotoPath(formData: FormData) {
 }
 
 export async function addHostelRep(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = parseForm(formData);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -62,6 +64,7 @@ export async function addHostelRep(formData: FormData) {
 }
 
 export async function updateHostelRep(id: number, formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = parseForm(formData);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -105,6 +108,7 @@ export async function updateHostelRep(id: number, formData: FormData) {
 }
 
 export async function deleteHostelRep(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
 
   const { data: existing } = await supabase

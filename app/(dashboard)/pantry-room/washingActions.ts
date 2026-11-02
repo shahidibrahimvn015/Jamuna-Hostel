@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { ADMINS_ONLY, isAdminCaller } from "@/lib/auth/requireAdmin";
 
 const machineSchema = z.object({
   machine_code: z.string().trim().min(1, "Machine ID is required"),
@@ -28,6 +29,7 @@ function friendlyError(message: string, code?: string) {
 }
 
 export async function addWashingMachine(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = parseMachine(formData);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -43,6 +45,7 @@ export async function addWashingMachine(formData: FormData) {
 }
 
 export async function updateWashingMachine(id: number, formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = parseMachine(formData);
   if (!parsed.success) {
     return { error: parsed.error.issues[0]?.message ?? "Invalid input" };
@@ -61,6 +64,7 @@ export async function updateWashingMachine(id: number, formData: FormData) {
 }
 
 export async function deleteWashingMachine(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
   const { error } = await supabase.from("washing_machines").delete().eq("id", id);
 

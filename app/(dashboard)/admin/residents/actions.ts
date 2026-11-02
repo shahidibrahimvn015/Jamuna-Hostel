@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
-import { getSessionProfile } from "@/lib/auth/getSessionProfile";
+import { isAdminCaller } from "@/lib/auth/requireAdmin";
 import { syncRolesForRollNumbers } from "@/lib/auth/resolveRole";
 import { createClient } from "@/lib/supabase/server";
 
@@ -17,10 +17,7 @@ const rollNumberSchema = z
 // trigger a service-role write to profiles.role via syncRolesForRollNumbers,
 // which bypasses RLS by design. That privilege must never be reachable by a
 // non-admin, so each action verifies the caller first.
-async function requireAdmin() {
-  const { profile } = await getSessionProfile();
-  return profile?.role === "admin";
-}
+const requireAdmin = isAdminCaller;
 
 export async function addResident(formData: FormData) {
   if (!(await requireAdmin())) return { error: "Admins only" };

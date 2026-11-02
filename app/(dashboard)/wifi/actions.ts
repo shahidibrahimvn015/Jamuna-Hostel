@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { ADMINS_ONLY, isAdminCaller } from "@/lib/auth/requireAdmin";
 
 const optionalText = z
   .string()
@@ -12,6 +13,7 @@ const optionalText = z
   .transform((s) => s || null);
 
 export async function addTroubleshootingBlock(title: string) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const trimmed = title.trim();
   if (!trimmed) return { error: "Title cannot be empty" };
 
@@ -27,6 +29,7 @@ export async function addTroubleshootingBlock(title: string) {
 }
 
 export async function deleteTroubleshootingBlock(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
   const { error } = await supabase
     .from("wifi_troubleshooting_blocks")
@@ -40,6 +43,7 @@ export async function deleteTroubleshootingBlock(id: number) {
 }
 
 export async function addTroubleshootingTip(blockId: number, tip: string) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const trimmed = tip.trim();
   if (!trimmed) return { error: "Tip cannot be empty" };
 
@@ -55,6 +59,7 @@ export async function addTroubleshootingTip(blockId: number, tip: string) {
 }
 
 export async function editTroubleshootingTip(id: number, tip: string) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const trimmed = tip.trim();
   if (!trimmed) return { error: "Tip cannot be empty" };
 
@@ -71,6 +76,7 @@ export async function editTroubleshootingTip(id: number, tip: string) {
 }
 
 export async function deleteTroubleshootingTip(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
   const { error } = await supabase
     .from("wifi_troubleshooting_tips")
@@ -153,6 +159,7 @@ export async function logTicket(input: {
 }
 
 export async function resolveTicket(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
   const { error } = await supabase
     .from("wifi_tickets")

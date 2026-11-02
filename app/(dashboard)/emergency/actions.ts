@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { ADMINS_ONLY, isAdminCaller } from "@/lib/auth/requireAdmin";
 
 const optionalText = z
   .string()
@@ -12,6 +13,7 @@ const optionalText = z
   .transform((s) => s || null);
 
 export async function updateFirstAidInfo(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = z
     .object({ contents: optionalText, guidelines: optionalText })
     .safeParse({
@@ -45,6 +47,7 @@ const contactSchema = z.object({
 });
 
 export async function addEmergencyContact(formData: FormData) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const parsed = contactSchema.safeParse({
     role_title: formData.get("role_title"),
     phone: formData.get("phone"),
@@ -66,6 +69,7 @@ export async function addEmergencyContact(formData: FormData) {
 }
 
 export async function deleteEmergencyContact(id: number) {
+  if (!(await isAdminCaller())) return ADMINS_ONLY;
   const supabase = await createClient();
   const { error } = await supabase
     .from("emergency_contacts")
