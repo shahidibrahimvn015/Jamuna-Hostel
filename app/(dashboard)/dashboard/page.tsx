@@ -18,6 +18,11 @@ export default async function DashboardOverviewPage() {
     supabase.from("pantry_room").select("*").order("id"),
   ]);
 
+  // Pantry status is for residents and admins. The database enforces this
+  // (migration 0021); hiding the section just avoids showing viewers an empty
+  // card.
+  const canSeePantry = profile?.role === "resident" || profile?.role === "admin";
+
   const displayName = profile?.full_name || profile?.roll_number || "there";
   const { weekday, day, month } = formatHeaderDate(new Date());
 
@@ -125,12 +130,14 @@ export default async function DashboardOverviewPage() {
           </section>
 
           {/* Pantry status — the "today's classes" slot */}
-          <section className="flex flex-col gap-3">
-            <h2 className="text-sm font-semibold tracking-widest uppercase">
-              Pantry Status
-            </h2>
-            <PantryPreview rooms={rooms ?? []} />
-          </section>
+          {canSeePantry && (
+            <section className="flex flex-col gap-3">
+              <h2 className="text-sm font-semibold tracking-widest uppercase">
+                Pantry Status
+              </h2>
+              <PantryPreview rooms={rooms ?? []} />
+            </section>
+          )}
         </div>
       </div>
     </div>

@@ -5,6 +5,20 @@ import { WashingMachinesSection } from "./WashingMachinesSection";
 
 export default async function PantryRoomPage() {
   const { user, profile } = await getSessionProfile();
+
+  // The database enforces this (migration 0021) and the sidebar hides the link;
+  // this is what someone who types the URL sees instead of an empty page.
+  if (profile?.role !== "resident" && profile?.role !== "admin") {
+    return (
+      <div className="flex flex-col gap-2">
+        <h1 className="text-xl font-semibold">Hostel Facilities</h1>
+        <p className="text-sm text-muted-foreground">
+          Hostel facilities are only available to hostel residents.
+        </p>
+      </div>
+    );
+  }
+
   const supabase = await createClient();
 
   const [{ data: rooms }, { data: machines }, { data: slots }] =
@@ -29,7 +43,7 @@ export default async function PantryRoomPage() {
             key={room.id}
             initialRoom={room}
             currentUserId={user?.id ?? ""}
-            role={profile?.role}
+            role={profile.role}
           />
         ))}
         {(rooms ?? []).length === 0 && (
@@ -43,7 +57,7 @@ export default async function PantryRoomPage() {
         machines={machines ?? []}
         slots={slots ?? []}
         currentUserId={user?.id ?? ""}
-        role={profile?.role}
+        role={profile.role}
       />
     </div>
   );

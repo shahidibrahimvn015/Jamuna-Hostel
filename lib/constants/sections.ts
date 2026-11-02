@@ -13,6 +13,9 @@ export type DashboardSection = {
   description: string;
   icon: LucideIcon;
   color: "notice" | "pantry" | "wifi" | "hostelrep" | "budget" | "emergency";
+  // Hidden from the sidebar for viewers. Presentation only -- the data behind
+  // the section is protected by its own database rules.
+  residentsOnly?: boolean;
 };
 
 export const SECTION_COLOR_CLASSES: Record<
@@ -52,6 +55,7 @@ export const DASHBOARD_SECTIONS: DashboardSection[] = [
     description: "Check live occupancy and set your usage timer.",
     icon: UtensilsCrossed,
     color: "pantry",
+    residentsOnly: true,
   },
   {
     href: "/wifi",

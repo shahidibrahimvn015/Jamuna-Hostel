@@ -40,14 +40,17 @@ export function SidebarNav({
   const pathname = usePathname();
 
   const isAdmin = role === "admin";
-  // The complaints register is for people who actually live here. Hiding the
-  // link is presentation only -- who can open the sheet is decided by its
-  // Google Drive sharing settings, not by this app.
-  const canSeeComplaints = isAdmin || role === "resident";
+  // Some sections are for people who actually live here. Hiding the link is
+  // presentation only -- Hostel Facilities is enforced by database rules, and
+  // who can open the complaints sheet by its Google Drive sharing settings.
+  const isMember = isAdmin || role === "resident";
+  const canSeeComplaints = isMember;
 
   const items: NavItem[] = [
     { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
-    ...DASHBOARD_SECTIONS.map((section) => ({
+    ...DASHBOARD_SECTIONS.filter(
+      (section) => isMember || !section.residentsOnly
+    ).map((section) => ({
       href: section.href,
       label: section.title,
       icon: section.icon,
